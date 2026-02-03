@@ -35,7 +35,7 @@ pnpm install
 pnpm run dev
 ```
 
-The frontend will run on `http://localhost:5173` by default.
+The frontend will run on `http://localhost:3000` by default.
 
 ---
 
