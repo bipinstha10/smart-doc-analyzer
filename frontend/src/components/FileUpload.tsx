@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Upload, File, X, CheckCircle } from "lucide-react";
+import {
+  Upload,
+  File,
+  X,
+  CheckCircle,
+  FileText,
+  AlignLeft,
+} from "lucide-react";
 import Button from "./Button";
 import { usePostDocumentMutation } from "../services/uploadApi";
 
@@ -10,6 +17,11 @@ export default function FileUpload() {
 
   const [postDocument, { isLoading, isError, isSuccess, error, reset }] =
     usePostDocumentMutation();
+
+  const [result, setResult] = useState<{
+    category: string;
+    summary: string;
+  } | null>(null);
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -39,6 +51,7 @@ export default function FileUpload() {
 
   const handleFile = (file: File) => {
     setUploadedFile(file);
+    setResult(null);
     reset();
 
     if (file.type.startsWith("image/")) {
@@ -60,14 +73,15 @@ export default function FileUpload() {
   const removeFile = () => {
     setUploadedFile(null);
     setPreview(null);
+    setResult(null);
     reset();
   };
 
   const handleUpload = async () => {
     if (!uploadedFile) return;
     try {
-      const result = await postDocument(uploadedFile).unwrap();
-      console.log("Upload successful:", result);
+      const data = await postDocument(uploadedFile).unwrap();
+      setResult({ category: data.category, summary: data.summary });
     } catch (err) {
       console.error("Upload failed:", err);
     }
@@ -111,19 +125,6 @@ export default function FileUpload() {
                   <div className="px-6 sm:px-8 py-3 bg-[#1E59A7] text-white rounded-lg font-medium hover:bg-[#154482] transition flex items-center justify-center space-x-2 shadow-md">
                     <File className="w-5 h-5" />
                     <span>Browse Files</span>
-                  </div>
-                </label>
-
-                <label className="cursor-pointer w-full sm:w-auto">
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept=".pdf,.docx,.txt,image/*"
-                    onChange={handleFileChange}
-                  />
-                  <div className="px-6 sm:px-8 py-3 bg-[#1E59A7] text-white rounded-lg font-medium hover:bg-[#154482] transition flex items-center justify-center space-x-2 shadow-md">
-                    <Upload className="w-5 h-5" />
-                    <span>Upload Document</span>
                   </div>
                 </label>
               </div>
@@ -212,6 +213,48 @@ export default function FileUpload() {
                       {(error as { data?: { message?: string } })?.data
                         ?.message ?? "Upload failed. Please try again."}
                     </p>
+                  </div>
+                )}
+
+                {/* Result Section — Category and Summary */}
+                {isSuccess && result && (
+                  <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6">
+                    <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
+                      Document Analysis
+                    </h4>
+
+                    {/* Category */}
+                    <div className="flex items-start space-x-3 mb-4">
+                      <div className="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
+                        <FileText className="w-5 h-5 text-[#1E59A7]" />
+                      </div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">
+                          Category
+                        </p>
+                        <span className="inline-block px-3 py-1 bg-[#1E59A7] text-white text-sm font-medium rounded-full">
+                          {result.category}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Divider */}
+                    <hr className="border-gray-200 my-4" />
+
+                    {/* Summary */}
+                    <div className="flex items-start space-x-3">
+                      <div className="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
+                        <AlignLeft className="w-5 h-5 text-[#1E59A7]" />
+                      </div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">
+                          Summary
+                        </p>
+                        <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+                          {result.summary}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
 

@@ -5,6 +5,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
+import random
 
 router = APIRouter()
 
@@ -15,6 +16,18 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Allowed file types
 ALLOWED_EXTENSIONS = {".pdf", ".docx", ".txt", ".png", ".jpg", ".jpeg", ".gif"}
+
+# TODO: Replace these with actual ML model outputs when ready
+MOCK_CATEGORIES = ["Complaint", "Notice", "Invitation", "Invoice", "Letter", "Resume"]
+
+MOCK_SUMMARIES = [
+    "This document contains a formal complaint regarding a recent service issue that requires immediate attention and resolution.",
+    "This is an official notice regarding the upcoming changes in company policy effective next month.",
+    "This document serves as an invitation to the annual company event scheduled for the end of this quarter.",
+    "This is an invoice for the services rendered during the current billing cycle with a due date of 30 days.",
+    "This letter formally acknowledges the receipt of the application and outlines the next steps in the process.",
+    "This resume highlights the candidate's professional experience, skills, and educational background.",
+]
 
 
 @router.post("/upload")
@@ -48,5 +61,8 @@ async def upload_document(file: UploadFile = File(...)):
             "fileName": file.filename,
             "message": "File uploaded successfully",
             "uploadedAt": datetime.now().isoformat(),
+            # TODO: Replace these with actual ML model outputs when ready
+            "category": random.choice(MOCK_CATEGORIES),
+            "summary": random.choice(MOCK_SUMMARIES),
         }
     )

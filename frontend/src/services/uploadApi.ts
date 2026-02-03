@@ -5,6 +5,8 @@ interface UploadResponse {
   fileName: string;
   message: string;
   uploadedAt: string;
+  category: string;
+  summary: string;
 }
 
 export const uploadApi = baseApi.injectEndpoints({
