@@ -5,7 +5,7 @@ export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: retry(
     fetchBaseQuery({
-      baseUrl: "http://localhost:3000",
+      baseUrl: "http://localhost:8000",
       credentials: "include",
     }),
     {
