@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import {
   Upload,
   File,
@@ -10,7 +10,7 @@ import {
 import Button from "./Button";
 import { usePostDocumentMutation } from "../services/uploadApi";
 
-export default function FileUpload() {
+const FileUpload = forwardRef<HTMLDivElement>((props, ref) => {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -88,7 +88,10 @@ export default function FileUpload() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+    <div
+      ref={ref}
+      className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16"
+    >
       <div
         className={`bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-12 border-2 border-dashed transition-all duration-200 ${
           dragActive ? "border-[#1E59A7] bg-indigo-50" : "border-gray-300"
@@ -281,4 +284,6 @@ export default function FileUpload() {
       </div>
     </div>
   );
-}
+});
+
+export default FileUpload;
