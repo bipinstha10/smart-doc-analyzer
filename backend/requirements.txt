@@ -1,3 +1,7 @@
 fastapi
 uvicorn
+torch
+transformers
 python-multipart
+python-docx
+PyPDF2
