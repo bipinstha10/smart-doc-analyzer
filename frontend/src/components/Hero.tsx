@@ -1,6 +1,10 @@
 import Button from "./Button";
 
-const Hero = () => {
+interface HeroSectionProps {
+  onButtonClick: () => void;
+}
+
+const Hero = ({ onButtonClick }: HeroSectionProps) => {
   return (
     <section className="px-4 md:px-6 py-10 mb-10">
       <div className="bg-[#1E59A7] rounded-4xl min-h-[80vh] flex items-center">
@@ -15,7 +19,9 @@ const Hero = () => {
               understanding your documents with ease.
             </p>
 
-            <Button className="md:w-80">Upload Documents</Button>
+            <Button onClick={onButtonClick} className="md:w-80">
+              Get Started
+            </Button>
           </div>
         </div>
       </div>
