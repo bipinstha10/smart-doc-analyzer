@@ -1,0 +1,5 @@
+models/
+myenv/
+backend/myenv/
+venv/
+.env/
