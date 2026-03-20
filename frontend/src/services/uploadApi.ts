@@ -7,6 +7,8 @@ interface UploadResponse {
   uploadedAt: string;
   category: string;
   summary: string;
+  all_scores: Record<string, number>;
+  confidence: number;
 }
 
 export const uploadApi = baseApi.injectEndpoints({

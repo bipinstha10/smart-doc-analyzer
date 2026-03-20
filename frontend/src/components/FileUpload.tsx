@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Button from "./Button";
 import { usePostDocumentMutation } from "../services/uploadApi";
+import ScoresComponent from "./ScoresComponent";
 
 const FileUpload = forwardRef<HTMLDivElement>((props, ref) => {
   const [dragActive, setDragActive] = useState(false);
@@ -21,6 +22,8 @@ const FileUpload = forwardRef<HTMLDivElement>((props, ref) => {
   const [result, setResult] = useState<{
     category: string;
     summary: string;
+    all_scores: Record<string, number>;
+    confidence: number;
   } | null>(null);
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
@@ -81,7 +84,12 @@ const FileUpload = forwardRef<HTMLDivElement>((props, ref) => {
     if (!uploadedFile) return;
     try {
       const data = await postDocument(uploadedFile).unwrap();
-      setResult({ category: data.category, summary: data.summary });
+      setResult({
+        category: data.category,
+        summary: data.summary,
+        all_scores: data.all_scores,
+        confidence: data.confidence,
+      });
     } catch (err) {
       console.error("Upload failed:", err);
     }
@@ -241,6 +249,14 @@ const FileUpload = forwardRef<HTMLDivElement>((props, ref) => {
                       </div>
                     </div>
 
+                    <div className="mb-6">
+                      <ScoresComponent
+                        scores={result.all_scores}
+                        primaryCategory={result.category}
+                        confidence={result.confidence}
+                      />
+                    </div>
+
                     {/* Divider */}
                     <hr className="border-gray-200 my-4" />
 
@@ -273,7 +289,7 @@ const FileUpload = forwardRef<HTMLDivElement>((props, ref) => {
                     {isLoading
                       ? "Uploading..."
                       : isSuccess
-                        ? "Uploaded ✓"
+                        ? "Uploaded"
                         : "Process Document"}
                   </span>
                 </Button>
