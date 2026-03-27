@@ -121,8 +121,9 @@ const FileUpload = forwardRef<HTMLDivElement>((props, ref) => {
               </h3>
 
               <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 text-center px-4">
-                Supports PDF, DOCX, TXT. Take a clear photo of the document for
-                best results.
+                Supported file formats: PDF, DOCX, and TXT. For best results,
+                upload high-quality digital files. Photos or scans of documents
+                are not accepted.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0">
@@ -130,7 +131,7 @@ const FileUpload = forwardRef<HTMLDivElement>((props, ref) => {
                   <input
                     type="file"
                     className="hidden"
-                    accept=".pdf,.docx,.txt,image/*"
+                    accept=".pdf,.docx,.txt,/*"
                     onChange={handleFileChange}
                   />
                   <div className="px-6 sm:px-8 py-3 bg-[#1E59A7] text-white rounded-lg font-medium hover:bg-[#154482] transition flex items-center justify-center space-x-2 shadow-md">
@@ -256,9 +257,6 @@ const FileUpload = forwardRef<HTMLDivElement>((props, ref) => {
                         confidence={result.confidence}
                       />
                     </div>
-
-                    {/* Divider */}
-                    <hr className="border-gray-200 my-4" />
 
                     {/* Summary */}
                     <div className="flex items-start space-x-3">
