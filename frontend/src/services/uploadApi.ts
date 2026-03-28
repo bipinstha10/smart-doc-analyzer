@@ -25,7 +25,14 @@ export const uploadApi = baseApi.injectEndpoints({
         };
       },
     }),
+    postText: build.mutation<UploadResponse, string>({
+      query: (text: string) => ({
+        url: "/text",
+        method: "POST",
+        body: { text },
+      }),
+    }),
   }),
 });
 
-export const { usePostDocumentMutation } = uploadApi;
+export const { usePostDocumentMutation, usePostTextMutation } = uploadApi;
