@@ -11,6 +11,7 @@ import docx
 import PyPDF2
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from transformers import (
     BertTokenizer,
     BertForSequenceClassification,
@@ -406,6 +407,10 @@ def summarize(text: str, label: str) -> tuple[str, float]:
 # ──────────────────────────────────────────────────────────────
 
 
+class TextPayload(BaseModel):
+    text: str
+
+
 @router.post("/upload")
 async def upload_document(file: UploadFile = File(...)):
     if not file.filename:
@@ -465,5 +470,42 @@ async def upload_document(file: UploadFile = File(...)):
             "inferenceTime": round(inference_time, 2),  # seconds
             "originalLength": len(text.split()),  # word count
             "summaryLength": len(summary.split()),  # word count
+        }
+    )
+
+
+@router.post("/text")
+async def submit_text(payload: TextPayload):
+    """Process raw text input through classification and summarization."""
+    text = payload.text.strip()
+
+    if not text:
+        raise HTTPException(status_code=422, detail="Text cannot be empty")
+
+    if len(text.split()) < 10:
+        raise HTTPException(
+            status_code=422, detail="Text too short (need at least 10 words)"
+        )
+
+    # Run models
+    try:
+        label, confidence, all_scores = classify(text)
+        summary, inference_time = summarize(text, label)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Model inference failed: {str(e)}")
+
+    return JSONResponse(
+        content={
+            "id": str(uuid.uuid4()),
+            "fileName": "text-input.txt",
+            "message": "Text processed successfully",
+            "uploadedAt": datetime.now().isoformat(),
+            "category": label,
+            "confidence": round(confidence * 100, 2),
+            "all_scores": {k: round(v * 100, 2) for k, v in all_scores.items()},
+            "summary": summary,
+            "inferenceTime": round(inference_time, 2),
+            "originalLength": len(text.split()),
+            "summaryLength": len(summary.split()),
         }
     )
