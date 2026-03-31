@@ -8,11 +8,11 @@ import {
   AlignLeft,
   Type,
 } from "lucide-react";
-import Button from "./Button";
+import Button from "../common/Button";
 import {
   usePostDocumentMutation,
   usePostTextMutation,
-} from "../services/uploadApi";
+} from "../../services/uploadApi";
 import ScoresComponent from "./ScoresComponent";
 
 const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
