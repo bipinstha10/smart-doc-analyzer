@@ -8,7 +8,7 @@ import {
   Route,
   RouterProvider,
 } from "react-router";
-import Home from "./views/Home.tsx";
+import Home from "./pages/Home.tsx";
 
 import { ApiProvider } from "@reduxjs/toolkit/query/react";
 import baseApi from "./services/baseApi.ts";

@@ -1,5 +1,5 @@
-import FileUpload from "../components/FileUpload";
-// import Hero from "../components/Hero";
+import FileUpload from "../components/features/FileUpload";
+// import Hero from "../components/layout/Hero";
 import { useRef } from "react";
 
 const Home = () => {
