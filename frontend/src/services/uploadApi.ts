@@ -1,3 +1,4 @@
+// uploadApi.ts
 import baseApi from "./baseApi";
 
 interface UploadResponse {
@@ -6,9 +7,12 @@ interface UploadResponse {
   message: string;
   uploadedAt: string;
   category: string;
-  summary: string;
-  all_scores: Record<string, number>;
   confidence: number;
+  all_scores: Record<string, number>;
+  summary: string;
+  inferenceTime: number; // ✅ add missing fields
+  originalLength: number;
+  summaryLength: number;
 }
 
 export const uploadApi = baseApi.injectEndpoints({
@@ -17,7 +21,6 @@ export const uploadApi = baseApi.injectEndpoints({
       query: (file: File) => {
         const formData = new FormData();
         formData.append("file", file);
-
         return {
           url: "/upload",
           method: "POST",
