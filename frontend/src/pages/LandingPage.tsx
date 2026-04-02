@@ -99,8 +99,9 @@ const LandingPage = () => {
             Have questions or feedback? We'd love to hear from you.
           </p>
           <div className="flex flex-col gap-4 md:flex-row justify-center">
-            <Button variant="primary">Email Us</Button>
-            <Button variant="outline">Schedule a Demo</Button>
+            <a href="mailto:beepeenstha10@gmail.com.com">
+              <Button variant="primary">Email Us</Button>
+            </a>
           </div>
         </div>
       </section>
