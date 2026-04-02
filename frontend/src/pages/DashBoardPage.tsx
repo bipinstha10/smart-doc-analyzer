@@ -1,0 +1,104 @@
+import { useState, useRef } from "react";
+import FileUpload from "../components/features/FileUpload";
+import Sidebar from "../components/layout/Sidebar";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
+import StatisticsCard from "../components/features/StatisticsCard";
+import RecentFilesCard from "../components/features/RecentFilesCard";
+
+const DashboardPage = () => {
+  const fileUploadRef = useRef<HTMLDivElement>(null);
+
+  const [recentFiles, setRecentFiles] = useState<string[]>([]);
+
+  const scoreData = useSelector((state: RootState) => state.score.data);
+
+  // Add file to recent files
+  const handleFileAdded = (fileName: string) => {
+    setRecentFiles((prev) => [fileName, ...prev.slice(0, 4)]);
+  };
+
+  // Update statistics when Redux data changes
+  const statistics = scoreData
+    ? [
+        {
+          label: "Notices",
+          percentage: Math.round(scoreData.all_scores.notice || 0),
+        },
+        {
+          label: "Feedback",
+          percentage: Math.round(scoreData.all_scores.feedback || 0),
+        },
+        {
+          label: "Complaints",
+          percentage: Math.round(scoreData.all_scores.complaint || 0),
+        },
+      ]
+    : [
+        { label: "Notices", percentage: 0 },
+        { label: "Feedback", percentage: 0 },
+        { label: "Complaints", percentage: 0 },
+      ];
+
+  return (
+    <div className="grid min-h-screen md:grid-cols-12 bg-[#F9F9F9]">
+      <div className="md:col-span-2">
+        <Sidebar />
+      </div>
+
+      <main className="md:col-span-10">
+        <Content
+          fileUploadRef={fileUploadRef}
+          statistics={statistics}
+          recentFiles={recentFiles}
+          onFileAdded={handleFileAdded}
+        />
+      </main>
+    </div>
+  );
+};
+
+export default DashboardPage;
+
+// ================= HEADER =================
+const Header = () => {
+  return (
+    <>
+      <h1 className="mt-4 max-w-2xl text-4xl font-semibold leading-tight text-onBackground md:text-5xl">
+        Classify anything.
+      </h1>
+      <p className="mt-3 max-w-xl text-base leading-relaxed text-[#474747]">
+        Upload your business documents or paste raw text. Our neural engine
+        identifies intent and routes them into categorized workflows instantly.
+      </p>
+    </>
+  );
+};
+
+// ================= CONTENT =================
+type ContentProps = {
+  fileUploadRef: React.RefObject<HTMLDivElement | null>;
+  statistics: { label: string; percentage: number }[];
+  recentFiles: string[];
+  onFileAdded: (fileName: string) => void;
+};
+
+const Content = ({ fileUploadRef, statistics, recentFiles }: ContentProps) => {
+  return (
+    <div className="grid items-center gap-2 md:grid-cols-10 md:px-20 md:ml-30 md:mt-20">
+      {/* LEFT SIDE */}
+      <div className="md:col-span-5">
+        <div className="ml-7">
+          <Header />
+        </div>
+        <FileUpload ref={fileUploadRef} />
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className="md:col-span-4 flex flex-col gap-5 mx-auto md:w-sm">
+        <StatisticsCard statistics={statistics} />
+        <RecentFilesCard files={recentFiles} />
+      </div>
+    </div>
+  );
+};
