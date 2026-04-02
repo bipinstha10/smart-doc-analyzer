@@ -1,73 +1,42 @@
-import { useState } from "react";
+import LoginForm from "../components/features/LoginForm";
+import Divider from "../components/features/Divider";
+import { UserRoundPlus } from "lucide-react";
 import { Link } from "react-router";
+import { AuthNavbar } from "../components/layout/Navbar";
 
-export const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
+const SignIn = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mx-auto mt-24 max-w-xl rounded-base bg-surfaceContainer p-10">
-        <h1 className="text-5xl font-semibold text-onBackground">
-          Log in to DocCat+
-        </h1>
-        <p className="mt-2 font-accent text-[11px] uppercase tracking-[0.22em] text-secondary">
-          Editorial Content Management
-        </p>
-        <form
-          className="mt-8 space-y-5"
-          onSubmit={(e) => {
-            e.preventDefault();
-            alert(`Login submitted for ${email || "unknown user"}`);
-          }}
-        >
-          <label className="block">
-            <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
-              Work Email
-            </p>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@company.com"
-              className="mt-2 w-full rounded-base border border-outlineVariant/20 bg-surfaceContainer px-4 py-3"
-            />
-          </label>
-          <label className="block">
-            <div className="flex items-center justify-between">
-              <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
-                Password
-              </p>
-              <span className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
-                Forgot?
-              </span>
-            </div>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 w-full rounded-base border border-outlineVariant/20 bg-surfaceContainer px-4 py-3"
-            />
-          </label>
-          <button
-            type="submit"
-            className="w-full rounded-base bg-primary py-3 font-accent text-xs uppercase tracking-[0.18em] text-[#e2e2e2]"
-          >
-            Log In
-          </button>
-        </form>
-        <div className="mt-10 text-center">
-          <p className="text-sm text-secondary">New to the platform?</p>
-          <Link
-            to="/signup"
-            className="mt-2 inline-block font-accent text-xs uppercase tracking-[0.2em] text-onBackground"
-          >
-            Create an account
-          </Link>
+    <div>
+      <AuthNavbar />
+      <div className="min-h-screen flex flex-col items-center justify-center px-10 md:mt-10 md:px-4">
+        <div className="w-full max-w-md">
+          <div className="items-left mb-10">
+            <h1 className="font-[teko] text-3xl md:text-5xl mb-5">Sign In</h1>
+          </div>
+
+          <LoginForm />
+
+          <Divider text="OR" />
+
+          <div className="flex flex-col gap-3">
+            <button className="w-full cursor-pointer text-black border border-gray-600 rounded py-2 md:py-4 flex items-center justify-center gap-8">
+              <img
+                src="data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg' %3E%3Cpath d='M17.4612 7.21757H16.751V7.18098H8.81632V10.7075H13.7989C13.072 12.7604 11.1187 14.234 8.81632 14.234C5.89503 14.234 3.52653 11.8655 3.52653 8.94425C3.52653 6.02296 5.89503 3.65446 8.81632 3.65446C10.1648 3.65446 11.3916 4.16316 12.3257 4.9941L14.8194 2.5004C13.2448 1.03292 11.1385 0.12793 8.81632 0.12793C3.94751 0.12793 0 4.07544 0 8.94425C0 13.8131 3.94751 17.7606 8.81632 17.7606C13.6851 17.7606 17.6326 13.8131 17.6326 8.94425C17.6326 8.35311 17.5718 7.77609 17.4612 7.21757Z' fill='%23FFC107' /%3E%3Cpath d='M1.0166 4.84069L3.9132 6.96498C4.69697 5.02451 6.59513 3.65446 8.8164 3.65446C10.1649 3.65446 11.3916 4.16316 12.3257 4.9941L14.8194 2.5004C13.2448 1.03292 11.1386 0.12793 8.8164 0.12793C5.43005 0.12793 2.49333 2.03975 1.0166 4.84069Z' fill='%23FF3D00' /%3E%3Cpath d='M8.8165 17.7612C11.0938 17.7612 13.1629 16.8897 14.7274 15.4725L11.9988 13.1635C11.0839 13.8593 9.96591 14.2356 8.8165 14.2347C6.52338 14.2347 4.57629 12.7725 3.84278 10.7319L0.967773 12.947C2.42687 15.8022 5.39004 17.7612 8.8165 17.7612Z' fill='%234CAF50' /%3E%3Cpath d='M17.4612 7.21823H16.7511V7.18164H8.81641V10.7082H13.7989C13.4512 11.6852 12.8249 12.539 11.9973 13.164L11.9987 13.1631L14.7273 15.4721C14.5342 15.6475 17.6327 13.3531 17.6327 8.9449C17.6327 8.35377 17.5719 7.77674 17.4612 7.21823Z' fill='%231976D2' /%3E%3C/svg%3E%0A"
+                alt="google"
+              ></img>
+              <span>Continue with Google</span>
+            </button>
+            <Link to="/signup">
+              <button className="w-full cursor-pointer text-black border border-gray-600 rounded py-2 md:py-4 flex items-center justify-center gap-8">
+                <UserRoundPlus />
+                <span>Create a New Account</span>
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default SignIn;
