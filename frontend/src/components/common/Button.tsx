@@ -11,14 +11,12 @@ const Button = ({
   className = "",
   ...props
 }: ButtonProps) => {
-  const baseStyles =
-    "cursor-pointer inline-flex items-center justify-center px-6 py-3 rounded-4xl font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2";
+  const baseStyles = "cursor-pointer px-2 py-2 border rounded";
 
   const variants = {
-    primary: "bg-[#F17733] text-white hover:bg-[#e0701d] focus:ring-[#1E59A7]",
-    secondary: "bg-white text-[#1E59A7] hover:bg-gray-100 focus:ring-[#1E59A7]",
-    outline:
-      "border border-[#1E59A7] text-[#1E59A7] hover:bg-[#1E59A7]/10 focus:ring-[#1E59A7]",
+    primary: "bg-[#000] text-white hover:bg-[#333333]",
+    secondary: "bg-white text-[#1E59A7] hover:bg-gray-100",
+    outline: "border-[#333333] text-[#333333] hover:bg-[#1E59A7]/10",
   };
 
   return (

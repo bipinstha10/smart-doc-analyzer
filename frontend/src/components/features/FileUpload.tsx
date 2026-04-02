@@ -5,7 +5,7 @@ import {
   X,
   CheckCircle,
   FileText,
-  AlignLeft,
+  // AlignLeft,
   Type,
 } from "lucide-react";
 import Button from "../common/Button";
@@ -13,9 +13,13 @@ import {
   usePostDocumentMutation,
   usePostTextMutation,
 } from "../../services/uploadApi";
-import ScoresComponent from "./ScoresComponent";
+// import ScoresComponent from "./ScoresComponent";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { setScoreData } from "../../store/scoreSlice";
 
-const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
+const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
+  const dispatch = useAppDispatch();
+
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -107,6 +111,7 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
         all_scores: data.all_scores,
         confidence: data.confidence,
       });
+      dispatch(setScoreData(data)); // ✅ save full result to Redux
     } catch (err) {
       console.error("Upload failed:", err);
     }
@@ -122,6 +127,7 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
         all_scores: data.all_scores,
         confidence: data.confidence,
       });
+      dispatch(setScoreData(data)); // ✅ save full result to Redux
     } catch (err) {
       console.error("Text submit failed:", err);
     }
@@ -155,7 +161,7 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
               onClick={() => switchMode("file")}
               className={`px-4 py-2 rounded-md text-sm font-medium transition ${
                 mode === "file"
-                  ? "bg-[#1E59A7] text-white"
+                  ? "bg-black text-white"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -165,7 +171,7 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
               onClick={() => switchMode("text")}
               className={`px-4 py-2 rounded-md text-sm font-medium transition ${
                 mode === "text"
-                  ? "bg-[#1E59A7] text-white"
+                  ? "bg-black text-white"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -175,8 +181,8 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
 
           {mode === "file" && !uploadedFile ? (
             <>
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-indigo-100 rounded-full flex items-center justify-center mb-4 sm:mb-6">
-                <Upload className="w-8 h-8 sm:w-10 sm:h-10 text-[#1E59A7]" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 rounded-full flex items-center justify-center mb-4 sm:mb-6">
+                <Upload className="w-8 h-8 sm:w-10 sm:h-10 text-black" />
               </div>
 
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-3 text-center px-4">
@@ -197,7 +203,7 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
                     accept=".pdf,.docx,.txt,/*"
                     onChange={handleFileChange}
                   />
-                  <div className="px-6 sm:px-8 py-3 bg-[#1E59A7] text-white rounded-lg font-medium hover:bg-[#154482] transition flex items-center justify-center space-x-2 shadow-md">
+                  <div className="px-6 sm:px-8 py-3 bg-black text-white rounded-lg font-medium hover:bg-[#154482] transition flex items-center justify-center space-x-2 shadow-md">
                     <File className="w-5 h-5" />
                     <span>Browse Files</span>
                   </div>
@@ -321,16 +327,16 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
                       </div>
                     </div>
 
-                    <div className="mb-6">
+                    {/* <div className="mb-6">
                       <ScoresComponent
                         scores={result.all_scores}
                         primaryCategory={result.category}
                         confidence={result.confidence}
                       />
-                    </div>
+                    </div> */}
 
                     {/* Summary */}
-                    <div className="flex items-start space-x-3">
+                    {/* <div className="flex items-start space-x-3">
                       <div className="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
                         <AlignLeft className="w-5 h-5 text-[#1E59A7]" />
                       </div>
@@ -342,7 +348,7 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
                           {result.summary}
                         </p>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 )}
 
@@ -351,7 +357,7 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
                   variant="primary"
                   onClick={handleUpload}
                   disabled={isLoading || isSuccess}
-                  className="w-full px-6 sm:px-8 py-3 sm:py-4 shadow-md space-x-2 text-base sm:text-lg"
+                  className="w-full flex items-center justify-center gap-2 md:py-5"
                 >
                   <Upload className="w-5 h-5 sm:w-6 sm:h-6" />
                   <span>
@@ -435,16 +441,16 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
                       </div>
                     </div>
 
-                    <div className="mb-6">
+                    {/* <div className="mb-6">
                       <ScoresComponent
                         scores={result.all_scores}
                         primaryCategory={result.category}
                         confidence={result.confidence}
                       />
-                    </div>
+                    </div> */}
 
                     {/* Summary */}
-                    <div className="flex items-start space-x-3">
+                    {/* <div className="flex items-start space-x-3">
                       <div className="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
                         <AlignLeft className="w-5 h-5 text-[#1E59A7]" />
                       </div>
@@ -456,7 +462,7 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
                           {result.summary}
                         </p>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 )}
 
@@ -465,7 +471,7 @@ const FileUpload = forwardRef<HTMLDivElement>((_, ref) => {
                   variant="primary"
                   onClick={handleTextSubmit}
                   disabled={isTextLoading || isTextSuccess || !textInput.trim()}
-                  className="w-full px-6 sm:px-8 py-3 sm:py-4 shadow-md space-x-2 text-base sm:text-lg mt-4"
+                  className="w-full flex items-center justify-center gap-2 md:py-5"
                 >
                   <Type className="w-5 h-5 sm:w-6 sm:h-6" />
                   <span>

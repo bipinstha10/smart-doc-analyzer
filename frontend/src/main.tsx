@@ -1,30 +1,44 @@
+// main.tsx
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
 } from "react-router";
-import Home from "./pages/Home.tsx";
 
-import { ApiProvider } from "@reduxjs/toolkit/query/react";
-import baseApi from "./services/baseApi.ts";
+import LandingPage from "./pages/LandingPage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
+import SignUpPage from "./pages/SignUpPage.tsx";
+import DashBoardPage from "./pages/DashBoardPage.tsx";
+import HistoryPage from "./pages/HistoryPage.tsx";
+import GridTryOut from "./pages/GridTryOut.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route index element={<Home />} />
+      <Route index element={<LandingPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/dashboard" element={<DashBoardPage />} />
+      <Route path="/history" element={<HistoryPage />} />
+      <Route path="/grid" element={<GridTryOut />} />
     </Route>,
   ),
 );
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ApiProvider api={baseApi}>
+    <Provider store={store}>
+      {" "}
+      {/* ✅ Single Provider */}
       <RouterProvider router={router} />
-    </ApiProvider>
+    </Provider>
   </StrictMode>,
 );
