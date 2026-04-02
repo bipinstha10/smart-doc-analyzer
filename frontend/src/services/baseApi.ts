@@ -12,7 +12,7 @@ export const baseApi = createApi({
       maxRetries: 3,
     },
   ),
-  tagTypes: [],
+  tagTypes: ["users", "user"],
   endpoints: () => ({}),
 });
 
