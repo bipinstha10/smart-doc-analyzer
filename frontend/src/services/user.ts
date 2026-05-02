@@ -1,8 +1,9 @@
 import type {
+  TokenResponse,
   User,
   UserListResponse,
   UserLoginInput,
-  UserLoginResponse,
+  // UserLoginResponse,
   UserResponse,
 } from "../types/userInput";
 import baseApi from "./baseApi";
@@ -17,7 +18,7 @@ export const userApi = baseApi.injectEndpoints({
           url,
         };
       },
-      providesTags: ["users"],
+      providesTags: ["User"],
     }),
 
     getUser: build.query<UserResponse, string>({
@@ -28,32 +29,27 @@ export const userApi = baseApi.injectEndpoints({
           url,
         };
       },
-      providesTags: ["user"],
+      providesTags: ["User"],
     }),
 
-    postUsers: build.mutation<UserResponse, User>({
-      query: (userInput) => {
-        const url = "/users";
-
-        return {
-          url,
-          method: "POST",
-          body: userInput,
-        };
-      },
-      invalidatesTags: ["users"],
+    postUsers: build.mutation<
+      TokenResponse,
+      { email: string; password: string }
+    >({
+      query: (userInput) => ({
+        url: "/auth/signup",
+        method: "POST",
+        body: userInput,
+      }),
+      invalidatesTags: ["User"],
     }),
 
-    postUsersLogin: build.mutation<UserLoginResponse, UserLoginInput>({
-      query: (userLoginInput) => {
-        const url = "/users/login";
-
-        return {
-          url,
-          method: "POST",
-          body: userLoginInput,
-        };
-      },
+    postUsersLogin: build.mutation<TokenResponse, UserLoginInput>({
+      query: (userLoginInput) => ({
+        url: "/auth/login",
+        method: "POST",
+        body: userLoginInput,
+      }),
       invalidatesTags: [],
     }),
 
@@ -67,7 +63,7 @@ export const userApi = baseApi.injectEndpoints({
           body: userInput,
         };
       },
-      invalidatesTags: ["users"],
+      invalidatesTags: ["User"],
     }),
 
     deleteUser: build.mutation<UserResponse, number>({
@@ -79,7 +75,7 @@ export const userApi = baseApi.injectEndpoints({
           method: "DELETE",
         };
       },
-      invalidatesTags: ["users"],
+      invalidatesTags: ["User"],
     }),
   }),
 });
@@ -91,4 +87,6 @@ export const {
   useUpdateUsersMutation,
   useDeleteUserMutation,
   usePostUsersLoginMutation,
+  usePostUsersMutation: useSignupMutation,
+  usePostUsersLoginMutation: useLoginMutation,
 } = userApi;
