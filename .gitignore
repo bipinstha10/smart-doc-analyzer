@@ -2,4 +2,5 @@ model
 myenv/
 backend/myenv/
 venv/
-.env/
+.env
+services/pgdata
