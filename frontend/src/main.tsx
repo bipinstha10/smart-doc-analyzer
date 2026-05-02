@@ -19,6 +19,7 @@ import SignUpPage from "./pages/SignUpPage.tsx";
 import DashBoardPage from "./pages/DashBoardPage.tsx";
 import HistoryPage from "./pages/HistoryPage.tsx";
 import GridTryOut from "./pages/GridTryOut.tsx";
+import ProtectedRoute from "./components/common/ProtectedRoute.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,8 +27,22 @@ const router = createBrowserRouter(
       <Route index element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/dashboard" element={<DashBoardPage />} />
-      <Route path="/history" element={<HistoryPage />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashBoardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/history"
+        element={
+          <ProtectedRoute>
+            <HistoryPage />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/grid" element={<GridTryOut />} />
     </Route>,
   ),

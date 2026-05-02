@@ -6,13 +6,17 @@ export const baseApi = createApi({
   baseQuery: retry(
     fetchBaseQuery({
       baseUrl: "http://localhost:8000",
-      credentials: "include",
+      prepareHeaders: (headers) => {
+        const token = localStorage.getItem("access_token");
+        if (token) headers.set("Authorization", `Bearer ${token}`);
+        return headers;
+      },
     }),
     {
       maxRetries: 3,
     },
   ),
-  tagTypes: [],
+  tagTypes: ["User", "Document"],
   endpoints: () => ({}),
 });
 
