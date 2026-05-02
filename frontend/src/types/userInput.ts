@@ -13,9 +13,16 @@ export interface UserListResponse {
 }
 
 export interface UserResponse {
-  data: User;
-  status: number;
-  message: string;
+  id: number;
+  email: string;
+  created_at: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  user: UserResponse;
 }
 
 export type UserInput = {
@@ -27,10 +34,6 @@ export type UserInput = {
   confirmPassword: string;
 };
 
-export type UserLoginResponse = {
-  status: number;
-  message: string;
-};
 export type UserLoginInput = {
   email: string;
   password: string;
