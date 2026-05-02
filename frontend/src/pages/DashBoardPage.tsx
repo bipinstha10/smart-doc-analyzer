@@ -19,26 +19,26 @@ const DashboardPage = () => {
   };
 
   // Update statistics when Redux data changes
-  const statistics = scoreData
-    ? [
-        {
-          label: "Notices",
-          percentage: Math.round(scoreData.all_scores.notice || 0),
-        },
-        {
-          label: "Feedback",
-          percentage: Math.round(scoreData.all_scores.feedback || 0),
-        },
-        {
-          label: "Complaints",
-          percentage: Math.round(scoreData.all_scores.complaint || 0),
-        },
-      ]
-    : [
-        { label: "Notices", percentage: 0 },
-        { label: "Feedback", percentage: 0 },
-        { label: "Complaints", percentage: 0 },
-      ];
+  const allScores = scoreData?.all_scores ?? {
+    notice: 0,
+    feedback: 0,
+    complaint: 0,
+  };
+
+  const statistics = [
+    {
+      label: "Notices",
+      percentage: Math.round(allScores.notice || 0),
+    },
+    {
+      label: "Feedback",
+      percentage: Math.round(allScores.feedback || 0),
+    },
+    {
+      label: "Complaints",
+      percentage: Math.round(allScores.complaint || 0),
+    },
+  ];
 
   return (
     <div className="grid min-h-screen md:grid-cols-12 bg-[#F9F9F9]">

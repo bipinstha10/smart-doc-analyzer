@@ -5,13 +5,16 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import type { UserInput, UserLoginInput } from "../../types/userInput";
 import { toast } from "react-toastify";
 
-import { usePostUsersLoginMutation } from "../../services/user";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { useLoginMutation } from "../../services/user";
+import { setCredentials } from "../../store/authSlice";
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  const [validUser] = usePostUsersLoginMutation();
+  const [login] = useLoginMutation();
 
   const {
     register,
@@ -22,18 +25,15 @@ export const LoginPage = () => {
 
   const onLogin: SubmitHandler<UserLoginInput> = async (userData) => {
     try {
-      const response = await validUser(userData).unwrap();
+      const response = await login(userData).unwrap();
 
-      if (response.status === 200) {
-        toast.success(response.message);
-        navigate("/");
-        reset();
-      }
+      dispatch(setCredentials(response));
+      toast.success("Logged in successfully.");
+      navigate("/");
+      reset();
     } catch (err: any) {
       if ("status" in err && err.status === 401) {
-        toast.error(err.data?.message ?? "Invalid Credentials.");
-      } else if ("status" in err && err.status === 409) {
-        toast.error("Email already registered");
+        toast.error(err.data?.detail ?? "Invalid credentials.");
       } else {
         toast.error("Something went wrong. Please try again.");
       }
@@ -70,7 +70,7 @@ export const LoginPage = () => {
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className="cursor-pointer absolute top-2 right-2 flex items-center text-gray-400 hover:text-white"
+          className="cursor-pointer absolute top-2 right-2 flex items-center text-gray-400"
         >
           {showPassword ? <Eye size={20} /> : <EyeClosed size={20} />}
         </button>

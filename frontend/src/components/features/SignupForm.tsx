@@ -3,33 +3,39 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import type { UserInput } from "../../types/userInput";
 import { toast } from "react-toastify";
 
-import { usePostUsersMutation } from "../../services/user";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { useSignupMutation } from "../../services/user";
+import { setCredentials } from "../../store/authSlice";
 
 const SignupForm = () => {
   const navigate = useNavigate();
 
-  const [createUser] = usePostUsersMutation();
+  const dispatch = useAppDispatch();
+  const [signup] = useSignupMutation();
 
   const {
     register,
     handleSubmit,
     reset,
-    watch,
+    getValues,
     formState: { errors },
   } = useForm<UserInput>();
 
   const onSubmit: SubmitHandler<UserInput> = async (userData) => {
     try {
-      const response = await createUser(userData).unwrap();
+      const response = await signup({
+        email: userData.email,
+        password: userData.password,
+      }).unwrap();
 
-      if (response.status === 201) {
-        toast.success(response.message);
-        navigate("/");
-        reset();
-      }
-    } catch (err: any) {
-      if ("status" in err && err.status === 409) {
-        toast.error("Email already registered");
+      dispatch(setCredentials(response));
+      toast.success("Account created successfully.");
+      navigate("/");
+      reset();
+    } catch (err: unknown) {
+      const error = err as { status?: number; data?: { detail?: string } };
+      if ("status" in error && error.status === 400) {
+        toast.error(error.data?.detail || "Email already registered.");
       } else {
         toast.error("Something went wrong. Please try again.");
       }
@@ -85,6 +91,7 @@ const SignupForm = () => {
       )}
       <label className="text-sm text-black">Password *</label>
       <input
+        type="password"
         className="text-sm w-full flex-9/10 bg-white border outline-0 p-2 mb-6"
         placeholder="Enter your password"
         {...register("password", {
@@ -107,7 +114,7 @@ const SignupForm = () => {
         {...register("confirmPassword", {
           required: "Please confirm your password",
           validate: (value) =>
-            value === watch("password") || "Password do not match",
+            value === getValues("password") || "Passwords do not match",
         })}
       />
       {errors.confirmPassword && (

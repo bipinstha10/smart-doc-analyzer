@@ -1,10 +1,20 @@
 import LoginForm from "../components/features/LoginForm";
 import Divider from "../components/features/Divider";
 import { UserRoundPlus } from "lucide-react";
-import { Link } from "react-router";
+import { Link, Navigate } from "react-router";
 import { AuthNavbar } from "../components/layout/Navbar";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
 
 const SignIn = () => {
+  const isAuthenticated = useSelector(
+    (state: RootState) => !!state.auth.access_token,
+  );
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return (
     <div>
       <AuthNavbar />
