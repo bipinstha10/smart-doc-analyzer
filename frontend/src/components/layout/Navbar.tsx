@@ -3,7 +3,7 @@ import Button from "../common/Button";
 
 export const MainNavbar = () => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50  bg-white border-b border-[#9e9e9e8f]">
+    <header className="fixed top-0 left-0 right-0 z-50 px-8 md:px-0  bg-white border-b border-[#9e9e9e8f]">
       <div className="max-w-7xl mx-auto flex items-center justify-between py-5">
         <div className="flex items-center gap-8">
           <Link
