@@ -45,7 +45,7 @@ export const Sidebar = () => {
   return (
     <aside className="px-4 py-8 flex flex-col h-screen">
       {/* Logo */}
-      <Link to="/" className="text-xl font-semibold text-onBackground">
+      <Link to="/dashboard" className="text-xl font-semibold text-onBackground">
         DocCat+
       </Link>
 
