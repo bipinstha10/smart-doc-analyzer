@@ -15,24 +15,17 @@ from app.routes import auth, documents
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Lifespan context manager for startup and shutdown events
-    """
-    # Startup
     print("🚀 Starting FastAPI application...")
 
-    # Create all tables from models
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # ✅ Tables are created by Alembic migrations
+    # Don't create tables here anymore
 
-    print("✅ Database tables created successfully")
+    print("✅ FastAPI ready (migrations already applied)")
 
-    yield  # Application runs here
+    yield
 
-    # Shutdown
     print("🛑 Shutting down application...")
     await engine.dispose()
-    print("✅ Database connections closed")
 
 
 # ===== FASTAPI APP =====
