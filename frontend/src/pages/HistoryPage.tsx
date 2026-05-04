@@ -52,7 +52,7 @@ const HistoryPage = () => {
         <Sidebar />
       </div>
 
-      <div className="md:col-span-10">
+      <div className="md:col-span-10 bg-white">
         <section className="px-6 py-8 md:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
@@ -125,38 +125,39 @@ const HistoryPage = () => {
                 <p className="text-sm text-secondary">No documents found.</p>
               )}
 
-              {results.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="grid md:grid-cols-12 items-center rounded-base bg-surfaceContainer px-4 py-3 text-sm"
-                >
-                  <p className="md:col-span-1 font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
-                    {formatDate(doc.created_at)}
-                  </p>
-                  <div className="md:col-span-5 text-base text-onBackground mt-2">
-                    <p className="font-semibold">Document #{doc.id}</p>
-                    <p className="text-xs text-secondary line-clamp-2">
-                      {doc.original_content}
+              <div className="h-90 overflow-y-auto">
+                {results.map((doc) => (
+                  <div
+                    key={doc.id}
+                    className="grid md:grid-cols-12 items-center rounded-base bg-surfaceContainer px-4 py-3 text-sm hover:bg-[#F3F3F4]"
+                  >
+                    <p className="md:col-span-2 font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
+                      {formatDate(doc.created_at)}
                     </p>
-                  </div>
+                    <div className="md:col-span-6 text-base text-onBackground mt-2">
+                      <p className="font-semibold">Document #{doc.id}</p>
+                      <p className="text-xs text-secondary line-clamp-2">
+                        {doc.original_content}
+                      </p>
+                    </div>
 
-                  <div className="flex flex-col gap-2 mt-4 md:col-span-6 md:mt-0 md:grid md:grid-cols-6 md:gap-4">
-                    <Button
-                      variant="outline"
-                      className="md:col-span-3 font-accent text-[10px] uppercase tracking-[0.2em] text-secondary"
-                    >
-                      {doc.category}
-                    </Button>
-                    <Button
-                      onClick={() => setSelectedDocId(doc.id)}
-                      variant="primary"
-                      className="md:col-span-3 font-accent text-[10px] uppercase tracking-[0.2em] text-onBackground"
-                    >
-                      View Summary
-                    </Button>
+                    <div className="flex flex-col gap-2 mt-4 md:col-span-4 md:mt-0 md:grid md:grid-cols-6 md:gap-4">
+                      <div className="md:col-span-3 flex justify-center items-center">
+                        <span className="rounded-2xl p-2 w-25 text-center bg-[#E2E2E2] font-accent text-[10px] uppercase">
+                          {doc.category}
+                        </span>
+                      </div>
+                      <Button
+                        onClick={() => setSelectedDocId(doc.id)}
+                        variant="primary"
+                        className="md:col-span-3 rounded-2xl p-4 font-accent text-[10px] uppercase tracking-[0.2em] text-onBackground"
+                      >
+                        View Summary
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
             {selectedDoc && (
