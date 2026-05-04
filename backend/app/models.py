@@ -18,7 +18,36 @@ class User(Base):
 
     # Fields
     email = Column(String, unique=True, nullable=False, index=True)
+
+    # NEW: Google OAuth support
+    google_id = Column(String, unique=True, nullable=True)
+
+    # UPDATED: allow null for OAuth-only users
+    password_hash = Column(String, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+    # Relationships
+    documents = relationship(
+        "Document",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
+    def __repr__(self):
+        return f"<User(id={self.id}, email={self.email})>"
+
+    """User model - represents a user account"""
+
+    __tablename__ = "users"
+
+    # Primary Key
+    id = Column(Integer, primary_key=True, index=True)
+
+    # Fields
+    email = Column(String, unique=True, nullable=False, index=True)
     password_hash = Column(String, nullable=False)
+    google_id = Column(String, unique=True, nullable=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
 
     # Relationships

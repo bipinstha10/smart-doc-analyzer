@@ -3,6 +3,7 @@ Main FastAPI application with asyncpg support
 """
 
 from fastapi import FastAPI
+from starlette.middleware.sessions import SessionMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import os
@@ -35,6 +36,12 @@ app = FastAPI(
     description="Upload documents and categorize them as notice, complaint, or feedback",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+# ===== SESSION MIDDLEWARE (REQUIRED FOR GOOGLE OAUTH) =====
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SESSION_SECRET"),
 )
 
 
