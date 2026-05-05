@@ -5,8 +5,11 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 import StatisticsCard from "../components/features/StatisticsCard";
 import RecentFilesCard from "../components/features/RecentFilesCard";
+import { Menu, X } from "lucide-react";
 
 const DashboardPage = () => {
+  const [open, setOpen] = useState(false);
+
   const fileUploadRef = useRef<HTMLDivElement>(null);
 
   const [recentFiles, setRecentFiles] = useState<string[]>([]);
@@ -42,11 +45,42 @@ const DashboardPage = () => {
 
   return (
     <div className="grid min-h-screen md:grid-cols-12">
-      <div className="md:col-span-2">
-        <Sidebar />
+      {/* Mobile menu button */}
+      <div className="md:hidden p-4">
+        <button onClick={() => setOpen(true)}>
+          <Menu />
+        </button>
       </div>
 
-      <main className="md:col-span-6 md:mx-40">
+      {/* Sidebar wrapper */}
+      <div
+        className={`
+        fixed top-0 left-0 z-50 h-full
+        transform transition-transform duration-300
+        ${open ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0 md:relative md:col-span-2
+      `}
+      >
+        <Sidebar />
+
+        {/* Close button */}
+        <button
+          onClick={() => setOpen(false)}
+          className="absolute top-8 right-4 md:hidden"
+        >
+          <X />
+        </button>
+      </div>
+
+      {/* Overlay (IMPORTANT: OUTSIDE sidebar wrapper) */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/30 md:hidden z-40"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      <main className="p-4 md:col-span-6 md:mx-40">
         <Content fileUploadRef={fileUploadRef} onFileAdded={handleFileAdded} />
       </main>
 
