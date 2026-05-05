@@ -49,7 +49,7 @@ const HistoryPage = () => {
       : "-";
 
   return (
-    <div className="grid min-h-screen md:grid-cols-12 bg-[#F9F9F9]">
+    <div className="min-h-screen bg-[#F9F9F9]">
       <div className="md:hidden p-4">
         <button onClick={() => setOpen(true)}>
           <Menu />
@@ -59,10 +59,10 @@ const HistoryPage = () => {
       {/* Sidebar wrapper */}
       <div
         className={`
-        fixed top-0 left-0 z-50 h-full
+        fixed top-0 left-0 z-50 h-screen w-80
         transform transition-transform duration-300
         ${open ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0 md:relative md:col-span-2
+        md:translate-x-0
       `}
       >
         <Sidebar />
@@ -84,7 +84,7 @@ const HistoryPage = () => {
         />
       )}
 
-      <div className="md:col-span-10 bg-white">
+      <div className="bg-white md:ml-80">
         <section className="px-6 py-8 md:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">

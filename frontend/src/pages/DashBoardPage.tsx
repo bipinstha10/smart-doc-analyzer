@@ -44,7 +44,7 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="grid min-h-screen md:grid-cols-12">
+    <div className="min-h-screen bg-[#F9F9F9]">
       {/* Mobile menu button */}
       <div className="md:hidden p-4">
         <button onClick={() => setOpen(true)}>
@@ -55,10 +55,10 @@ const DashboardPage = () => {
       {/* Sidebar wrapper */}
       <div
         className={`
-        fixed top-0 left-0 z-50 h-full
+        fixed top-0 left-0 z-50 h-full w-80
         transform transition-transform duration-300
         ${open ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0 md:relative md:col-span-2
+        md:translate-x-0
       `}
       >
         <Sidebar />
@@ -80,14 +80,20 @@ const DashboardPage = () => {
         />
       )}
 
-      <main className="p-4 md:col-span-6 md:mx-40">
-        <Content fileUploadRef={fileUploadRef} onFileAdded={handleFileAdded} />
+      <main className="bg-white md:ml-80 min-h-screen">
+        <div className="md:pl-40 md:grid md:grid-cols-12 gap-4 min-h-screen">
+          <div className="md:col-span-6 px-6 md:pt-15 md:px-8">
+            <Content
+              fileUploadRef={fileUploadRef}
+              onFileAdded={handleFileAdded}
+            />
+          </div>
+          <aside className="md:col-span-3 min-h-screen px-6 flex flex-col gap-5 justify-start items-center md:pt-70">
+            <StatisticsCard statistics={statistics} />
+            <RecentFilesCard files={recentFiles} />
+          </aside>
+        </div>
       </main>
-
-      <div className="md:col-span-4 flex flex-col gap-5 justify-center items-center md:w-sm px-8">
-        <StatisticsCard statistics={statistics} />
-        <RecentFilesCard files={recentFiles} />
-      </div>
     </div>
   );
 };
@@ -117,7 +123,7 @@ type ContentProps = {
 
 const Content = ({ fileUploadRef }: ContentProps) => {
   return (
-    <div className="md:mt-20">
+    <div className="md:mt-10">
       <Header />
       <FileUpload ref={fileUploadRef} />
     </div>
