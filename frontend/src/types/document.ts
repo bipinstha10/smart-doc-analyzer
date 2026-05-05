@@ -5,4 +5,5 @@ export interface DocumentResponse {
   summary: string;
   created_at: string;
   original_content: string;
+  all_scores: Record<string, number>;
 }

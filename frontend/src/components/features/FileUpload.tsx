@@ -1,19 +1,10 @@
 import React, { useState, forwardRef } from "react";
-import {
-  Upload,
-  File,
-  X,
-  CheckCircle,
-  FileText,
-  // AlignLeft,
-  Type,
-} from "lucide-react";
+import { Upload, File, X, CheckCircle, FileText, Type } from "lucide-react";
 import Button from "../common/Button";
 import {
   usePostDocumentMutation,
   usePostTextMutation,
 } from "../../services/uploadApi";
-// import ScoresComponent from "./ScoresComponent";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { setScoreData } from "../../store/scoreSlice";
 
@@ -44,7 +35,7 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
     category: string;
     summary: string;
     all_scores: Record<string, number>;
-    confidence: number;
+    confidence_score: number;
   } | null>(null);
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
@@ -109,7 +100,7 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
         category: data.category,
         summary: data.summary,
         all_scores: data.all_scores,
-        confidence: data.confidence,
+        confidence_score: data.confidence_score,
       });
       dispatch(setScoreData(data)); // ✅ save full result to Redux
     } catch (err) {
@@ -125,7 +116,7 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
         category: data.category,
         summary: data.summary,
         all_scores: data.all_scores,
-        confidence: data.confidence,
+        confidence_score: data.confidence_score,
       });
       dispatch(setScoreData(data)); // ✅ save full result to Redux
     } catch (err) {
@@ -314,8 +305,8 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
 
                     {/* Category */}
                     <div className="flex items-center space-x-3 mb-4">
-                      <div className="w-9 h-9 bg-indigo-100 rounded-lg flex justify-center items-center shrink-0">
-                        <FileText className="w-5 h-5 text-[#1E59A7]" />
+                      <div className="w-9 h-9 bg-[#E8E8E8] rounded-lg flex justify-center items-center shrink-0">
+                        <FileText className="w-5 h-5 text-[#474F58]" />
                       </div>
                       <div>
                         <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1 pl-2">
@@ -326,29 +317,6 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
                         </span>
                       </div>
                     </div>
-
-                    {/* <div className="mb-6">
-                      <ScoresComponent
-                        scores={result.all_scores}
-                        primaryCategory={result.category}
-                        confidence={result.confidence}
-                      />
-                    </div> */}
-
-                    {/* Summary */}
-                    {/* <div className="flex items-start space-x-3">
-                      <div className="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
-                        <AlignLeft className="w-5 h-5 text-[#1E59A7]" />
-                      </div>
-                      <div>
-                        <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">
-                          Summary
-                        </p>
-                        <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-                          {result.summary}
-                        </p>
-                      </div>
-                    </div> */}
                   </div>
                 )}
 
@@ -427,42 +395,19 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
                     </h4>
 
                     {/* Category */}
-                    <div className="flex items-start space-x-3 mb-4">
-                      <div className="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
-                        <FileText className="w-5 h-5 text-[#1E59A7]" />
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-9 h-9 bg-[#E8E8E8] rounded-lg flex justify-center items-center shrink-0">
+                        <FileText className="w-5 h-5 text-[#474F58]" />
                       </div>
                       <div>
-                        <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">
+                        <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1 pl-2">
                           Category
                         </p>
-                        <span className="inline-block px-3 py-1 bg-[#1E59A7] text-white text-sm font-medium rounded-full">
+                        <span className="inline-block px-3 py-1 bg-black text-white text-sm font-medium rounded-full">
                           {result.category}
                         </span>
                       </div>
                     </div>
-
-                    {/* <div className="mb-6">
-                      <ScoresComponent
-                        scores={result.all_scores}
-                        primaryCategory={result.category}
-                        confidence={result.confidence}
-                      />
-                    </div> */}
-
-                    {/* Summary */}
-                    {/* <div className="flex items-start space-x-3">
-                      <div className="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
-                        <AlignLeft className="w-5 h-5 text-[#1E59A7]" />
-                      </div>
-                      <div>
-                        <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">
-                          Summary
-                        </p>
-                        <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-                          {result.summary}
-                        </p>
-                      </div>
-                    </div> */}
                   </div>
                 )}
 

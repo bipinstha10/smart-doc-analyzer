@@ -75,6 +75,7 @@ class DocumentResponse(BaseModel):
     summary: Optional[str] = None
     created_at: datetime
     original_content: str
+    all_scores: Optional[dict[str, float]] = None
 
     class Config:
         from_attributes = True
