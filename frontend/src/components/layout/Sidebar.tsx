@@ -43,8 +43,9 @@ export const Sidebar = () => {
   };
 
   return (
-    <aside className="fixed left-0 top-0 w-75 h-screen px-4 py-8 flex flex-col z-50 bg-[#E8E8E8]">
+    <aside className="w-80 h-screen px-4 py-8 flex flex-col bg-[#E8E8E8]">
       {/* Logo */}
+
       <Link to="/dashboard" className="text-xl font-semibold text-onBackground">
         DocCat+
       </Link>
@@ -93,7 +94,7 @@ export const Sidebar = () => {
           className="w-full cursor-pointer border border-[#252524] flex items-center justify-center md:justify-start gap-2 rounded px-4 py-2 text-sm text-[#474747] shadow-2xl transition active:scale-95 active:shadow-md"
         >
           <User size={18} />
-          <span className="hidden md:inline">Menu</span>
+          <span className="inline">Menu</span>
         </button>
 
         {/* Dropdown Menu */}

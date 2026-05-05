@@ -153,25 +153,27 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
       >
         <div className="flex flex-col items-center justify-center">
           {/* Mode Toggle */}
-          <div className="relative w-1/2 p-2 flex mb-6 bg-[#666666b1] rounded-lg">
+          <div className="relative w-3/4 md:w-1/2 p-2 flex mb-6 bg-[#666666b1] rounded-lg">
             {/* Sliding background */}
             <div
               className={`absolute top-2 bottom-2 w-1/2  bg-black rounded-lg transition-transform duration-300 ease-in-out ${
-                mode === "file" ? "translate-x-0" : "translate-x-26"
+                mode === "file"
+                  ? "translate-x-0"
+                  : "translate-x-22 md:translate-x-26"
               }`}
             />
 
             {/* Buttons */}
             <button
               onClick={() => switchMode("file")}
-              className="relative z-10 w-1/2 p-2 text-sm font-medium text-white"
+              className="relative z-10 w-1/2 p-2 text-[12px] md:text-sm font-medium text-white"
             >
               File Upload
             </button>
 
             <button
               onClick={() => switchMode("text")}
-              className="relative z-10 w-1/2 p-2 text-sm font-medium text-white"
+              className="relative z-10 w-1/2 p-2 text-[12px] md:text-sm font-medium text-white"
             >
               Text Input
             </button>

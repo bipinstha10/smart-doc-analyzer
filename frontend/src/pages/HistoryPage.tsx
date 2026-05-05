@@ -5,8 +5,10 @@ import {
   useGetDocumentsQuery,
   useGetDocumentQuery,
 } from "../services/uploadApi";
+import { Menu, X } from "lucide-react";
 
 const HistoryPage = () => {
+  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedDocId, setSelectedDocId] = useState<number | null>(null);
 
@@ -47,12 +49,42 @@ const HistoryPage = () => {
       : "-";
 
   return (
-    <div className="grid min-h-screen md:grid-cols-12 bg-[#F9F9F9]">
-      <div className="md:col-span-2">
-        <Sidebar />
+    <div className="min-h-screen bg-[#F9F9F9]">
+      <div className="md:hidden p-4">
+        <button onClick={() => setOpen(true)}>
+          <Menu />
+        </button>
       </div>
 
-      <div className="md:col-span-10 bg-white">
+      {/* Sidebar wrapper */}
+      <div
+        className={`
+        fixed top-0 left-0 z-50 h-screen w-80
+        transform transition-transform duration-300
+        ${open ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0
+      `}
+      >
+        <Sidebar />
+
+        {/* Close button */}
+        <button
+          onClick={() => setOpen(false)}
+          className="absolute top-8 right-4 md:hidden"
+        >
+          <X />
+        </button>
+      </div>
+
+      {/* Overlay (IMPORTANT: OUTSIDE sidebar wrapper) */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/30 md:hidden z-40"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      <div className="bg-white md:ml-80">
         <section className="px-6 py-8 md:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
@@ -76,35 +108,35 @@ const HistoryPage = () => {
             </p>
 
             <div className="mt-8 grid gap-4 md:grid-cols-4">
-              <div className="rounded border-l border-[#474747] bg-white p-6 md:p-10 shadow-md shadow-gray-300/40">
+              <div className="rounded border-l border-[#474747] bg-white p-2 md:p-10 shadow-md shadow-gray-300/40">
                 <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
                   Total Processed
                 </p>
-                <p className="mt-5 md:mt-15 text-6xl font-semibold text-onBackground">
+                <p className="mt-5 text-2xl md:mt-15 md:text-6xl font-semibold text-onBackground">
                   {counts.total}
                 </p>
               </div>
-              <div className="rounded bg-[#F3F3F4] p-6 md:p-10 shadow-md shadow-gray-300/40">
+              <div className="rounded bg-[#F3F3F4] p-2 md:p-10 shadow-md shadow-gray-300/40">
                 <p className="font-accent text-[10px] uppercase tracking-[0.2em]">
                   Notice
                 </p>
-                <p className="mt-5 md:mt-15 text-5xl font-semibold">
+                <p className="mt-5 text-2xl  md:mt-15 md:text-5xl font-semibold">
                   {counts.notice}
                 </p>
               </div>
-              <div className="rounded bg-[#F3F3F4] p-6 md:p-10 shadow-md shadow-gray-300/40">
+              <div className="rounded bg-[#F3F3F4] p-2 md:p-10 shadow-md shadow-gray-300/40">
                 <p className="font-accent text-[10px] uppercase tracking-[0.2em]">
                   Feedback
                 </p>
-                <p className="mt-5 md:mt-15 text-5xl font-semibold">
+                <p className="mt-5 text-2xl md:mt-15 md:text-5xl font-semibold">
                   {counts.feedback}
                 </p>
               </div>
-              <div className="rounded bg-[#F3F3F4] p-6 md:p-10 shadow-md shadow-gray-300/40">
+              <div className="rounded bg-[#F3F3F4] p-2 md:p-10 shadow-md shadow-gray-300/40">
                 <p className="font-accent text-[10px] uppercase tracking-[0.2em]">
                   Complaint
                 </p>
-                <p className="mt-5 md:mt-15 text-5xl font-semibold">
+                <p className="mt-5 text-2xl  md:mt-15 md:text-5xl font-semibold">
                   {counts.complaint}
                 </p>
               </div>
@@ -141,8 +173,8 @@ const HistoryPage = () => {
                       </p>
                     </div>
 
-                    <div className="flex flex-col gap-2 mt-4 md:col-span-4 md:mt-0 md:grid md:grid-cols-6 md:gap-4">
-                      <div className="md:col-span-3 flex justify-center items-center">
+                    <div className="flex gap-2 mt-4 md:col-span-4 md:mt-0 md:grid md:grid-cols-6 md:gap-4">
+                      <div className="md:col-span-3 flex md:justify-center items-center">
                         <span className="rounded-2xl p-2 w-25 text-center bg-[#E2E2E2] font-accent text-[10px] uppercase">
                           {doc.category}
                         </span>
@@ -150,7 +182,7 @@ const HistoryPage = () => {
                       <Button
                         onClick={() => setSelectedDocId(doc.id)}
                         variant="primary"
-                        className="md:col-span-3 rounded-2xl p-4 font-accent text-[10px] uppercase tracking-[0.2em] text-onBackground"
+                        className="grow md:col-span-3 rounded-2xl p-4 font-accent text-[10px] uppercase tracking-[0.2em] text-onBackground"
                       >
                         View Summary
                       </Button>
