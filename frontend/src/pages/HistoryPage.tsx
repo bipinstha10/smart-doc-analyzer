@@ -5,8 +5,10 @@ import {
   useGetDocumentsQuery,
   useGetDocumentQuery,
 } from "../services/uploadApi";
+import { Menu, X } from "lucide-react";
 
 const HistoryPage = () => {
+  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedDocId, setSelectedDocId] = useState<number | null>(null);
 
@@ -48,9 +50,39 @@ const HistoryPage = () => {
 
   return (
     <div className="grid min-h-screen md:grid-cols-12 bg-[#F9F9F9]">
-      <div className="md:col-span-2">
-        <Sidebar />
+      <div className="md:hidden p-4">
+        <button onClick={() => setOpen(true)}>
+          <Menu />
+        </button>
       </div>
+
+      {/* Sidebar wrapper */}
+      <div
+        className={`
+        fixed top-0 left-0 z-50 h-full
+        transform transition-transform duration-300
+        ${open ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0 md:relative md:col-span-2
+      `}
+      >
+        <Sidebar />
+
+        {/* Close button */}
+        <button
+          onClick={() => setOpen(false)}
+          className="absolute top-8 right-4 md:hidden"
+        >
+          <X />
+        </button>
+      </div>
+
+      {/* Overlay (IMPORTANT: OUTSIDE sidebar wrapper) */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/30 md:hidden z-40"
+          onClick={() => setOpen(false)}
+        />
+      )}
 
       <div className="md:col-span-10 bg-white">
         <section className="px-6 py-8 md:px-8">
