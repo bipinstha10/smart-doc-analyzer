@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { skipToken } from "@reduxjs/toolkit/query";
 import Sidebar from "../components/layout/Sidebar";
 import Button from "../components/common/Button";
 import {
@@ -13,9 +14,7 @@ const HistoryPage = () => {
   const [selectedDocId, setSelectedDocId] = useState<number | null>(null);
 
   const { data: documents, isLoading, isError } = useGetDocumentsQuery();
-  const { data: selectedDoc } = useGetDocumentQuery(selectedDocId ?? 0, {
-    skip: selectedDocId === null,
-  });
+  const { data: selectedDoc } = useGetDocumentQuery(selectedDocId ?? skipToken);
 
   const results = useMemo(() => {
     if (!documents) return [];
@@ -192,7 +191,7 @@ const HistoryPage = () => {
               </div>
             </div>
 
-            {selectedDoc && (
+            {selectedDocId !== null && selectedDoc && (
               <div className="mt-10 rounded-xl bg-white p-6 shadow-md shadow-gray-300/40">
                 <div className="flex items-center justify-between gap-4">
                   <div>
