@@ -2,7 +2,7 @@ import { FileText } from "lucide-react";
 
 const RecentFilesCard = ({ files }: { files: string[] }) => {
   return (
-    <div className="rounded-xl bg-white p-5">
+    <div className="w-full rounded-xl bg-white p-5">
       <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
         Recent Samples
       </p>

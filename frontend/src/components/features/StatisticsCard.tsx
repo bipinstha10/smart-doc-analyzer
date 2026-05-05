@@ -2,7 +2,7 @@ type Stat = { label: string; percentage: number };
 
 const StatisticsCard = ({ statistics }: { statistics: Stat[] }) => {
   return (
-    <div className="rounded-xl bg-[#E8E8E8] p-5">
+    <div className="w-full rounded-xl bg-[#E8E8E8] p-5">
       <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
         Live Statistics
       </p>
