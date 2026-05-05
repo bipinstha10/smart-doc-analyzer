@@ -486,7 +486,15 @@ async def upload_document(
     await db.commit()
     await db.refresh(new_doc)
 
-    return DocumentResponse.model_validate(new_doc)
+    return DocumentResponse(
+        id=new_doc.id,
+        original_content=new_doc.original_content,
+        category=new_doc.category,
+        confidence_score=new_doc.confidence_score,
+        summary=new_doc.summary,
+        created_at=new_doc.created_at,
+        all_scores=all_scores,
+    )
 
 
 @router.post("/text")
@@ -532,7 +540,15 @@ async def submit_text(
     await db.commit()
     await db.refresh(new_doc)
 
-    return DocumentResponse.model_validate(new_doc)
+    return DocumentResponse(
+        id=new_doc.id,
+        original_content=new_doc.original_content,
+        category=new_doc.category,
+        confidence_score=new_doc.confidence_score,
+        summary=new_doc.summary,
+        created_at=new_doc.created_at,
+        all_scores=all_scores,
+    )
 
 
 @router.get("/", response_model=list[DocumentListResponse])
