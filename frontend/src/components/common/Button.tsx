@@ -11,7 +11,8 @@ const Button = ({
   className = "",
   ...props
 }: ButtonProps) => {
-  const baseStyles = "cursor-pointer px-2 py-2 border rounded";
+  const baseStyles =
+    "cursor-pointer px-2 py-2 rounded shadow-2xl transition active:scale-95 active:shadow-md";
 
   const variants = {
     primary: "bg-[#000] text-white hover:bg-[#333333]",
