@@ -141,10 +141,7 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
   };
 
   return (
-    <div
-      ref={ref}
-      className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16"
-    >
+    <div ref={ref} className="mx-auto py-12">
       <div
         className={`bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-12 border-2 border-dashed transition-all duration-200 ${
           dragActive ? "border-[#1E59A7] bg-indigo-50" : "border-gray-300"
@@ -156,24 +153,25 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
       >
         <div className="flex flex-col items-center justify-center">
           {/* Mode Toggle */}
-          <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+          <div className="relative w-1/2 p-2 flex mb-6 bg-[#666666b1] rounded-lg">
+            {/* Sliding background */}
+            <div
+              className={`absolute top-2 bottom-2 w-1/2  bg-black rounded-lg transition-transform duration-300 ease-in-out ${
+                mode === "file" ? "translate-x-0" : "translate-x-26"
+              }`}
+            />
+
+            {/* Buttons */}
             <button
               onClick={() => switchMode("file")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition ${
-                mode === "file"
-                  ? "bg-black text-white"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
+              className="relative z-10 w-1/2 p-2 text-sm font-medium text-white"
             >
               File Upload
             </button>
+
             <button
               onClick={() => switchMode("text")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition ${
-                mode === "text"
-                  ? "bg-black text-white"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
+              className="relative z-10 w-1/2 p-2 text-sm font-medium text-white"
             >
               Text Input
             </button>
@@ -203,7 +201,7 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
                     accept=".pdf,.docx,.txt,/*"
                     onChange={handleFileChange}
                   />
-                  <div className="px-6 sm:px-8 py-3 bg-black text-white rounded-lg font-medium hover:bg-[#154482] transition flex items-center justify-center space-x-2 shadow-md">
+                  <div className="px-6 sm:px-8 py-3 bg-black text-white rounded-lg font-medium hover:bg-[#181818] transition flex items-center justify-center space-x-2 shadow-md">
                     <File className="w-5 h-5" />
                     <span>Browse Files</span>
                   </div>
@@ -313,15 +311,15 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
                     </h4>
 
                     {/* Category */}
-                    <div className="flex items-start space-x-3 mb-4">
-                      <div className="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-9 h-9 bg-indigo-100 rounded-lg flex justify-center items-center shrink-0">
                         <FileText className="w-5 h-5 text-[#1E59A7]" />
                       </div>
                       <div>
-                        <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">
+                        <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1 pl-2">
                           Category
                         </p>
-                        <span className="inline-block px-3 py-1 bg-[#1E59A7] text-white text-sm font-medium rounded-full">
+                        <span className="inline-block px-3 py-1 bg-black text-white text-sm font-medium rounded-full">
                           {result.category}
                         </span>
                       </div>
@@ -471,7 +469,7 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
                   variant="primary"
                   onClick={handleTextSubmit}
                   disabled={isTextLoading || isTextSuccess || !textInput.trim()}
-                  className="w-full flex items-center justify-center gap-2 md:py-5"
+                  className="w-full rounded-xl flex items-center justify-center gap-2 md:py-5"
                 >
                   <Type className="w-5 h-5 sm:w-6 sm:h-6" />
                   <span>
