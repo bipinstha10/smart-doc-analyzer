@@ -41,19 +41,19 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="grid min-h-screen md:grid-cols-12 bg-[#F9F9F9]">
+    <div className="grid min-h-screen md:grid-cols-12">
       <div className="md:col-span-2">
         <Sidebar />
       </div>
 
-      <main className="md:col-span-10">
-        <Content
-          fileUploadRef={fileUploadRef}
-          statistics={statistics}
-          recentFiles={recentFiles}
-          onFileAdded={handleFileAdded}
-        />
+      <main className="md:col-span-6 md:mx-40">
+        <Content fileUploadRef={fileUploadRef} onFileAdded={handleFileAdded} />
       </main>
+
+      <div className="md:col-span-4 flex flex-col gap-5 justify-center items-center md:w-sm px-8">
+        <StatisticsCard statistics={statistics} />
+        <RecentFilesCard files={recentFiles} />
+      </div>
     </div>
   );
 };
@@ -78,27 +78,14 @@ const Header = () => {
 // ================= CONTENT =================
 type ContentProps = {
   fileUploadRef: React.RefObject<HTMLDivElement | null>;
-  statistics: { label: string; percentage: number }[];
-  recentFiles: string[];
   onFileAdded: (fileName: string) => void;
 };
 
-const Content = ({ fileUploadRef, statistics, recentFiles }: ContentProps) => {
+const Content = ({ fileUploadRef }: ContentProps) => {
   return (
-    <div className="grid items-center gap-2 md:grid-cols-10 md:px-20 md:ml-30 md:mt-20">
-      {/* LEFT SIDE */}
-      <div className="md:col-span-5">
-        <div className="ml-7">
-          <Header />
-        </div>
-        <FileUpload ref={fileUploadRef} />
-      </div>
-
-      {/* RIGHT SIDE */}
-      <div className="md:col-span-4 flex flex-col gap-5 mx-auto md:w-sm">
-        <StatisticsCard statistics={statistics} />
-        <RecentFilesCard files={recentFiles} />
-      </div>
+    <div className="md:mt-20">
+      <Header />
+      <FileUpload ref={fileUploadRef} />
     </div>
   );
 };
