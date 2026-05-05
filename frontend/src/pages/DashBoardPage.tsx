@@ -31,15 +31,15 @@ const DashboardPage = () => {
   const statistics = [
     {
       label: "Notices",
-      percentage: Math.round(allScores.notice || 0),
+      percentage: Math.round((allScores.notice || 0) * 100),
     },
     {
       label: "Feedback",
-      percentage: Math.round(allScores.feedback || 0),
+      percentage: Math.round((allScores.feedback || 0) * 100),
     },
     {
       label: "Complaints",
-      percentage: Math.round(allScores.complaint || 0),
+      percentage: Math.round((allScores.complaint || 0) * 100),
     },
   ];
 
