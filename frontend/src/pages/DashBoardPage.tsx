@@ -4,15 +4,12 @@ import Sidebar from "../components/layout/Sidebar";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 import StatisticsCard from "../components/features/StatisticsCard";
-import RecentFilesCard from "../components/features/RecentFilesCard";
 import { Menu, X } from "lucide-react";
 
 const DashboardPage = () => {
   const [open, setOpen] = useState(false);
 
   const fileUploadRef = useRef<HTMLDivElement>(null);
-
-  const [recentFiles, setRecentFiles] = useState<string[]>([]);
 
   const scoreData = useSelector((state: RootState) => state.score.data);
 
@@ -90,7 +87,6 @@ const DashboardPage = () => {
           </div>
           <aside className="md:col-span-3 min-h-screen px-6 flex flex-col gap-5 justify-start items-center md:pt-70">
             <StatisticsCard statistics={statistics} />
-            <RecentFilesCard files={recentFiles} />
           </aside>
         </div>
       </main>

@@ -18,7 +18,6 @@ import LoginPage from "./pages/LoginPage.tsx";
 import SignUpPage from "./pages/SignUpPage.tsx";
 import DashBoardPage from "./pages/DashBoardPage.tsx";
 import HistoryPage from "./pages/HistoryPage.tsx";
-import GridTryOut from "./pages/GridTryOut.tsx";
 import OAuthSuccessPage from "./pages/OAuthSuccessPage.tsx";
 import ProtectedRoute from "./components/common/ProtectedRoute.tsx";
 
@@ -45,7 +44,6 @@ const router = createBrowserRouter(
         }
       />
       <Route path="/oauth-success" element={<OAuthSuccessPage />} />
-      <Route path="/grid" element={<GridTryOut />} />
     </Route>,
   ),
 );
