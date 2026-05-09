@@ -6,12 +6,14 @@ import {
   useGetDocumentsQuery,
   useGetDocumentQuery,
 } from "../services/uploadApi";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 const HistoryPage = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedDocId, setSelectedDocId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const { data: documents, isLoading, isError } = useGetDocumentsQuery();
   const { data: selectedDoc } = useGetDocumentQuery(selectedDocId ?? skipToken);
@@ -26,6 +28,18 @@ const HistoryPage = () => {
         .includes(normalizedQuery);
     });
   }, [documents, query]);
+
+  // Calculate Pagination
+  const totalPages = Math.ceil(results.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedResults = results.slice(startIndex, endIndex);
+
+  // Reset to page 1 when search query changes
+  // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setQuery(e.target.value);
+  //   setCurrentPage(1);
+  // };
 
   const counts = useMemo(() => {
     return {
@@ -156,8 +170,8 @@ const HistoryPage = () => {
                 <p className="text-sm text-secondary">No documents found.</p>
               )}
 
-              <div className="h-90 overflow-y-auto">
-                {results.map((doc) => (
+              <div>
+                {paginatedResults.map((doc) => (
                   <div
                     key={doc.id}
                     className="grid md:grid-cols-12 items-center rounded-base bg-surfaceContainer px-4 py-3 text-sm hover:bg-[#F3F3F4]"
@@ -189,6 +203,58 @@ const HistoryPage = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Pagination Controls */}
+              {results.length > 0 && (
+                <div className="mt-6 flex items-center justify-between gap-4">
+                  <p className="text-sm text-secondary">
+                    Showing {startIndex + 1} to{" "}
+                    {Math.min(endIndex, results.length)} of {results.length}
+                  </p>
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      disabled={currentPage === 1}
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      className="rounded-2xl p-2"
+                    >
+                      <ChevronLeft size={20} />
+                    </Button>
+
+                    <div className="flex items-center gap-2">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (page) => (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`rounded-2xl px-3 py-1 text-sm font-accent uppercase ${
+                              currentPage === page
+                                ? "bg-[#333333] text-white"
+                                : "bg-[#E2E2E2] hover:bg-[#D0D0D0]"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        ),
+                      )}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      disabled={currentPage === totalPages}
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      className="rounded-2xl p-2"
+                    >
+                      <ChevronRight size={20} />
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {selectedDocId !== null && selectedDoc && (
@@ -203,11 +269,11 @@ const HistoryPage = () => {
                     </h2>
                   </div>
                   <Button
-                    variant="outline"
+                    variant="primary"
                     onClick={() => setSelectedDocId(null)}
-                    className="text-sm"
+                    className="text-sm rounded-full"
                   >
-                    Clear
+                    <X />
                   </Button>
                 </div>
 
