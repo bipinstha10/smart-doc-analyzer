@@ -5,6 +5,8 @@ import type {
   UserLoginInput,
   // UserLoginResponse,
   UserResponse,
+  RefreshTokenRequest,
+  RefreshTokenResponse,
 } from "../types/userInput";
 import baseApi from "./baseApi";
 
@@ -53,6 +55,14 @@ export const userApi = baseApi.injectEndpoints({
       invalidatesTags: [],
     }),
 
+    refreshToken: build.mutation<RefreshTokenResponse, RefreshTokenRequest>({
+      query: (refreshData) => ({
+        url: "/auth/refresh",
+        method: "POST",
+        body: refreshData,
+      }),
+    }),
+
     updateUsers: build.mutation<UserResponse, { id: string; userInput: User }>({
       query: ({ id, userInput }) => {
         const url = `users/${id}`;
@@ -89,4 +99,5 @@ export const {
   usePostUsersLoginMutation,
   usePostUsersMutation: useSignupMutation,
   usePostUsersLoginMutation: useLoginMutation,
+  useRefreshTokenMutation,
 } = userApi;
