@@ -8,10 +8,12 @@ A document upload system that categorizes and summarizes uploaded documents usin
 
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+- [Database Setup](#database-setup)
 - [Frontend Setup](#frontend-setup)
 - [Backend Setup](#backend-setup)
 - [Running the Application](#running-the-application)
 - [Environment Variables](#environment-variables)
+- [Session Management](#session-management)
 - [Git Workflow](#git-workflow)
 - [Contributing](#contributing)
 
@@ -25,6 +27,7 @@ Before you begin, make sure you have the following installed:
 - [pnpm](https://pnpm.io/) (package manager for Node.js)
 - [Python](https://www.python.org/) (v3.9 or above)
 - [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 
 ---
 
@@ -56,6 +59,32 @@ cd smart-doc-analyzer
 ```
 
 > **Note:** If you're unsure which method to use, HTTPS is the easiest to get started with. For SSH, you'll need to [set up SSH keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh) on your machine first.
+
+---
+
+## Database Setup
+
+The application uses PostgreSQL. Start the database using Docker Compose:
+
+**1. Navigate to the services directory**
+
+```bash
+cd services
+```
+
+**2. Start the PostgreSQL container**
+
+```bash
+docker compose up -d
+```
+
+This will start a PostgreSQL database at `localhost:4011` with the following credentials:
+
+- **User:** `username`
+- **Password:** `password`
+- **Database:** `db_name`
+
+> **Note:** Make sure Docker daemon is running before executing these commands.
 
 ---
 
@@ -115,16 +144,30 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-**4. Install dependencies**
+**4. Copy the environment file**
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your actual configuration (especially Google OAuth credentials if needed).
+
+**5. Install dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-**5. Start the server**
+**6. Run database migrations**
 
 ```bash
-uvicorn main:app --reload
+alembic upgrade head
+```
+
+**7. Start the server**
+
+```bash
+python run.py
 ```
 
 The backend will run on `http://localhost:8000`.
@@ -135,37 +178,102 @@ The backend will run on `http://localhost:8000`.
 
 Both the frontend and backend must run simultaneously for the application to work properly.
 
-**Terminal 1 — Backend:**
+**Terminal 1 — Database (if not already running):**
+
+```bash
+cd services
+docker compose up -d
+```
+
+**Terminal 2 — Backend:**
 
 ```bash
 cd backend
 source venv/bin/activate  # or venv\Scripts\activate on Windows
-uvicorn main:app --reload
+python run.py
 ```
 
-**Terminal 2 — Frontend:**
+**Terminal 3 — Frontend:**
 
 ```bash
 cd frontend
 pnpm run dev
 ```
 
-Once both are running, open your browser and navigate to `http://localhost:5173`.
+Once all are running, open your browser and navigate to `http://localhost:5173`.
 
 ---
 
 ## Environment Variables
 
-Currently, there are no `.env` files configured. The following values are hardcoded for local development:
+Both frontend and backend use environment configuration. Start with the provided example files:
 
-| Variable     | Current Value         | Location                           |
-| ------------ | --------------------- | ---------------------------------- |
-| Backend URL  | http://localhost:8000 | `frontend/src/services/baseApi.ts` |
-| Frontend URL | http://localhost:5173 | `backend/main.py` (CORS config)    |
+**Backend Environment (`.env`)**
 
-### To Change These Values:
+Copy `.env.example` to `.env` in the backend directory:
 
-Update the files mentioned above with your custom values. In a production environment, consider using `.env` files for secure configuration management.
+```bash
+cd backend
+cp .env.example .env
+```
+
+Key variables:
+
+| Variable                      | Description                           | Example                                                    |
+| ----------------------------- | ------------------------------------- | ---------------------------------------------------------- |
+| `DATABASE_URL`                | PostgreSQL connection string          | `postgresql+asyncpg://doccat:doccat@localhost:4011/doccat` |
+| `SECRET_KEY`                  | JWT secret key (change in production) | `your-super-secret-key-change-this-12345`                  |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | Access token expiration (minutes)     | `15`                                                       |
+| `REFRESH_TOKEN_EXPIRE_DAYS`   | Refresh token expiration (days)       | `7`                                                        |
+| `GOOGLE_CLIENT_ID`            | Google OAuth Client ID                | From Google Cloud Console                                  |
+| `GOOGLE_CLIENT_SECRET`        | Google OAuth Client Secret            | From Google Cloud Console                                  |
+| `FRONTEND_URL`                | Frontend URL for CORS                 | `http://localhost:5173`                                    |
+
+**Frontend Environment**
+
+Frontend API calls are configured to use `http://localhost:8000` by default (see `frontend/src/services/baseApi.ts`).
+
+---
+
+## Session Management
+
+The application uses JWT-based authentication with automatic token refresh:
+
+### Token Types
+
+- **Access Token**: Short-lived token for API authentication (default: 15 minutes)
+- **Refresh Token**: Long-lived token for obtaining new access tokens (default: 7 days)
+
+### How It Works
+
+1. User logs in or signs up → receives both access and refresh tokens
+2. Access token is used for all API requests
+3. When access token expires, the frontend automatically uses the refresh token to get a new access token
+4. This happens seamlessly without user interruption
+5. If refresh token expires, user is logged out
+
+### Adjusting Token Expiration
+
+Edit the backend `.env` file:
+
+```env
+ACCESS_TOKEN_EXPIRE_MINUTES=15    # Change access token duration
+REFRESH_TOKEN_EXPIRE_DAYS=7       # Change refresh token duration
+```
+
+For testing (quick expiration):
+
+```env
+ACCESS_TOKEN_EXPIRE_MINUTES=1     # Expires in 1 minute
+```
+
+### Token Storage
+
+Tokens are securely stored in the browser's localStorage:
+
+- `access_token` - Used for API requests
+- `refresh_token` - Used to refresh access tokens
+- `user` - Current user information
 
 ---
 
@@ -316,8 +424,18 @@ Follow these conventions for commit messages:
 
 If `http://localhost:5173` or `http://localhost:8000` is already in use:
 
-- **Frontend:** Modify the port in the Vite config
-- **Backend:** Run `uvicorn main:app --reload --port 8001`
+- **Frontend:** Modify the port in `vite.config.ts`
+- **Backend:** Modify the port in `backend/run.py`
+- **Database:** Modify the port in `services/docker-compose.yml`
+
+### Database Connection Issues
+
+If you cannot connect to the PostgreSQL database:
+
+1. Ensure Docker is running: `docker ps`
+2. Check if the container is running: `docker compose -f services/docker-compose.yml ps`
+3. Restart the database: `docker compose -f services/docker-compose.yml restart`
+4. Verify the `DATABASE_URL` in `backend/.env`
 
 ### Virtual Environment Issues
 
@@ -325,11 +443,25 @@ If the Python virtual environment doesn't activate:
 
 ```bash
 # Remove and recreate
-rm -rf venv
+rm -rf backend/venv
+cd backend
 python -m venv venv
 source venv/bin/activate  # macOS/Linux
 # or
 venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+```
+
+### Database Migration Issues
+
+If you encounter migration errors:
+
+```bash
+# Downgrade all migrations (use cautiously)
+alembic downgrade base
+
+# Re-run migrations
+alembic upgrade head
 ```
 
 ---
