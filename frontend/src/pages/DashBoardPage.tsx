@@ -13,11 +13,6 @@ const DashboardPage = () => {
 
   const scoreData = useSelector((state: RootState) => state.score.data);
 
-  // Add file to recent files
-  const handleFileAdded = (fileName: string) => {
-    setRecentFiles((prev) => [fileName, ...prev.slice(0, 4)]);
-  };
-
   // Update statistics when Redux data changes
   const allScores = scoreData?.all_scores ?? {
     notice: 0,
@@ -82,7 +77,7 @@ const DashboardPage = () => {
           <div className="md:col-span-6 px-6 md:pt-15 md:px-8">
             <Content
               fileUploadRef={fileUploadRef}
-              onFileAdded={handleFileAdded}
+              // onFileAdded={handleFileAdded}
             />
           </div>
           <aside className="md:col-span-3 min-h-screen px-6 flex flex-col gap-5 justify-start items-center md:pt-70">
@@ -114,7 +109,7 @@ const Header = () => {
 // ================= CONTENT =================
 type ContentProps = {
   fileUploadRef: React.RefObject<HTMLDivElement | null>;
-  onFileAdded: (fileName: string) => void;
+  // onFileAdded: (fileName: string) => void;
 };
 
 const Content = ({ fileUploadRef }: ContentProps) => {
