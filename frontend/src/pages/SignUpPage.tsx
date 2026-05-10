@@ -1,5 +1,5 @@
 import SignupForm from "../components/features/SignupForm";
-import Divider from "../components/features/Divider";
+import Divider from "../components/common/Divider";
 import { Link, Navigate } from "react-router";
 import { AuthNavbar } from "../components/layout/Navbar";
 import { useSelector } from "react-redux";

@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect, type RefObject } from "react";
+import { useState, useRef, type RefObject } from "react";
 import FileUpload, {
   type FileUploadRef,
-} from "../components/features/FileUpload";
+} from "../components/features/dashboard/FileUpload";
 import Sidebar from "../components/layout/Sidebar";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
-import StatisticsCard from "../components/features/StatisticsCard";
+import StatisticsCard from "../components/features/dashboard/StatisticsCard";
 import { Menu, X } from "lucide-react";
 
 const DashboardPage = () => {
@@ -14,12 +14,6 @@ const DashboardPage = () => {
   const fileUploadRef = useRef<FileUploadRef | null>(null);
 
   const scoreData = useSelector((state: RootState) => state.score.data);
-
-  useEffect(() => {
-    if (scoreData === null && fileUploadRef.current) {
-      fileUploadRef.current.resetClassification();
-    }
-  }, [scoreData]);
 
   // Update statistics when Redux data changes
   const allScores = scoreData?.all_scores ?? {

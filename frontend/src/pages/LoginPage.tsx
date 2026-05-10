@@ -1,5 +1,5 @@
 import LoginForm from "../components/features/LoginForm";
-import Divider from "../components/features/Divider";
+import Divider from "../components/common/Divider";
 import { UserRoundPlus } from "lucide-react";
 import { Link, Navigate } from "react-router";
 import { AuthNavbar } from "../components/layout/Navbar";

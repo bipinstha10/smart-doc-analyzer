@@ -7,14 +7,14 @@ import {
 } from "react";
 import { useSelector } from "react-redux";
 import { Upload, File, X, CheckCircle, FileText, Type } from "lucide-react";
-import Button from "../common/Button";
+import Button from "../../common/Button";
 import {
   usePostDocumentMutation,
   usePostTextMutation,
-} from "../../services/uploadApi";
-import { useAppDispatch } from "../../hooks/useAppDispatch";
-import { clearScoreData, setScoreData } from "../../store/scoreSlice";
-import type { RootState } from "../../store/store";
+} from "../../../services/uploadApi";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { clearScoreData, setScoreData } from "../../../store/scoreSlice";
+import type { RootState } from "../../../store/store";
 
 export interface FileUploadRef {
   resetClassification: () => void;

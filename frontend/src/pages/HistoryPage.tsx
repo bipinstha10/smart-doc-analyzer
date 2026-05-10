@@ -1,19 +1,20 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
 import Sidebar from "../components/layout/Sidebar";
-import Button from "../components/common/Button";
 import {
   useGetDocumentsQuery,
   useGetDocumentQuery,
   useDeleteDocumentMutation,
 } from "../services/uploadApi";
-import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
-import CopyButton from "../components/common/CopyButton";
-import DocumentMenu from "../components/features/DocumentMenu";
+import { Menu, X } from "lucide-react";
+import CountingCard from "../components/features/history/CountingCard";
+import DocumentRow from "../components/features/history/DocumentRow";
+import HistoryPagination from "../components/features/history/HistoryPagination";
+import SummaryPanel from "../components/features/history/SummaryPanel";
 
 const HistoryPage = () => {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query] = useState("");
   const [selectedDocId, setSelectedDocId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -41,12 +42,6 @@ const HistoryPage = () => {
   const endIndex = startIndex + itemsPerPage;
   const paginatedResults = results.slice(startIndex, endIndex);
 
-  // Reset to page 1 when search query changes
-  // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setQuery(e.target.value);
-  //   setCurrentPage(1);
-  // };
-
   const counts = useMemo(() => {
     return {
       total: documents?.length ?? 0,
@@ -57,15 +52,6 @@ const HistoryPage = () => {
         documents?.filter((doc) => doc.category === "complaint").length ?? 0,
     };
   }, [documents]);
-
-  const formatDate = (iso?: string) =>
-    iso
-      ? new Date(iso).toLocaleDateString(undefined, {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        })
-      : "-";
 
   const handleDelete = async (id: number) => {
     try {
@@ -126,18 +112,6 @@ const HistoryPage = () => {
 
       <div className="bg-white md:ml-80">
         <section className="px-6 py-8 md:px-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
-              History / All Items
-            </p>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="rounded-full border border-outlineVariant/30 bg-surfaceContainer px-4 py-2 text-sm"
-              placeholder="Search archive..."
-            />
-          </div>
-
           <div className="md:px-20 md:ml-20">
             <h1 className="mt-8 text-4xl md:text-5xl font-semibold text-onBackground">
               Archive
@@ -148,7 +122,7 @@ const HistoryPage = () => {
             </p>
 
             <div className="mt-8 grid gap-4 md:grid-cols-4">
-              <div className="rounded border-l border-[#474747] bg-white p-2 md:p-10 shadow-md shadow-gray-300/40">
+              <div className="rounded border-l border-[#474747] bg-white p-2 md:p-5 shadow-md shadow-gray-300/40">
                 <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
                   Total Processed
                 </p>
@@ -156,30 +130,9 @@ const HistoryPage = () => {
                   {counts.total}
                 </p>
               </div>
-              <div className="rounded bg-[#F3F3F4] p-2 md:p-10 shadow-md shadow-gray-300/40">
-                <p className="font-accent text-[10px] uppercase tracking-[0.2em]">
-                  Notice
-                </p>
-                <p className="mt-5 text-2xl  md:mt-15 md:text-5xl font-semibold">
-                  {counts.notice}
-                </p>
-              </div>
-              <div className="rounded bg-[#F3F3F4] p-2 md:p-10 shadow-md shadow-gray-300/40">
-                <p className="font-accent text-[10px] uppercase tracking-[0.2em]">
-                  Feedback
-                </p>
-                <p className="mt-5 text-2xl md:mt-15 md:text-5xl font-semibold">
-                  {counts.feedback}
-                </p>
-              </div>
-              <div className="rounded bg-[#F3F3F4] p-2 md:p-10 shadow-md shadow-gray-300/40">
-                <p className="font-accent text-[10px] uppercase tracking-[0.2em]">
-                  Complaint
-                </p>
-                <p className="mt-5 text-2xl  md:mt-15 md:text-5xl font-semibold">
-                  {counts.complaint}
-                </p>
-              </div>
+              <CountingCard heading="Notice" counts={counts.notice} />
+              <CountingCard heading="Feedback" counts={counts.feedback} />
+              <CountingCard heading="Complaint" counts={counts.complaint} />
             </div>
 
             <div className="mt-8 space-y-3">
@@ -199,168 +152,34 @@ const HistoryPage = () => {
 
               <div>
                 {paginatedResults.map((doc) => (
-                  <div
+                  <DocumentRow
                     key={doc.id}
-                    className="grid md:grid-cols-12 items-center rounded-base bg-surfaceContainer px-4 py-3 text-sm hover:bg-[#F3F3F4]"
-                  >
-                    <p className="md:col-span-2 font-accent text-[10px] uppercase tracking-[0.2em] text-secondary">
-                      {formatDate(doc.created_at)}
-                    </p>
-                    <div className="md:col-span-6 text-base text-onBackground mt-2">
-                      <p className="font-semibold">Document #{doc.id}</p>
-                      <p className="text-xs text-secondary line-clamp-2">
-                        {doc.original_content}
-                      </p>
-                    </div>
-
-                    <div className="flex gap-2 mt-4 md:col-span-4 md:mt-0 md:grid md:grid-cols-7 md:gap-4">
-                      <div className="md:col-span-2 flex md:justify-center items-center">
-                        <span className="rounded-2xl p-2 w-25 text-center bg-[#E2E2E2] font-accent text-[10px] uppercase">
-                          {doc.category}
-                        </span>
-                      </div>
-
-                      <Button
-                        onClick={() => {
-                          setSelectedDocId(doc.id);
-                        }}
-                        variant="primary"
-                        className="grow md:col-span-4 rounded-2xl p-4 font-accent text-[10px] uppercase tracking-[0.2em] text-onBackground"
-                      >
-                        View Summary
-                      </Button>
-
-                      <DocumentMenu docId={doc.id} onDelete={handleDelete} />
-                    </div>
-                  </div>
+                    doc={doc}
+                    onViewSummary={setSelectedDocId}
+                    onDelete={handleDelete}
+                  />
                 ))}
               </div>
 
               {/* Pagination Controls */}
               {results.length > 0 && (
-                <div className="mt-6 flex items-center justify-between gap-4">
-                  <p className="text-sm text-secondary">
-                    Showing {startIndex + 1} to{" "}
-                    {Math.min(endIndex, results.length)} of {results.length}
-                  </p>
-
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      disabled={currentPage === 1}
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(prev - 1, 1))
-                      }
-                      className="rounded-2xl p-2"
-                    >
-                      <ChevronLeft size={20} />
-                    </Button>
-
-                    <div className="flex items-center gap-2">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                        (page) => (
-                          <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
-                            className={`rounded-2xl px-3 py-1 text-sm font-accent uppercase ${
-                              currentPage === page
-                                ? "bg-[#333333] text-white"
-                                : "bg-[#E2E2E2] hover:bg-[#D0D0D0]"
-                            }`}
-                          >
-                            {page}
-                          </button>
-                        ),
-                      )}
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      disabled={currentPage === totalPages}
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                      }
-                      className="rounded-2xl p-2"
-                    >
-                      <ChevronRight size={20} />
-                    </Button>
-                  </div>
-                </div>
+                <HistoryPagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalResults={results.length}
+                  startIndex={startIndex}
+                  endIndex={endIndex}
+                  onPageChange={setCurrentPage}
+                />
               )}
             </div>
 
             {selectedDocId !== null && selectedDoc && (
-              <div
-                ref={summaryRef}
-                className="mt-10 rounded-xl bg-white p-6 shadow-md shadow-gray-300/40"
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-sm text-secondary uppercase tracking-[0.2em]">
-                      Selected summary
-                    </p>
-                    <h2 className="mt-2 text-2xl font-semibold text-onBackground">
-                      Document #{selectedDoc.id}
-                    </h2>
-                  </div>
-                  <Button
-                    variant="primary"
-                    onClick={() => setSelectedDocId(null)}
-                    className="text-sm rounded-full"
-                  >
-                    <X />
-                  </Button>
-                </div>
-
-                <div className="mt-6 grid gap-6 md:grid-cols-3">
-                  <div className="rounded-xl bg-surfaceContainer p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-secondary">
-                      Category
-                    </p>
-                    <p className="mt-2 text-lg font-semibold text-onBackground">
-                      {selectedDoc.category}
-                    </p>
-                  </div>
-                  <div className="rounded-xl bg-surfaceContainer p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-secondary">
-                      Confidence
-                    </p>
-                    <p className="mt-2 text-lg font-semibold text-onBackground">
-                      {(selectedDoc.confidence_score * 100).toFixed(1)}%
-                    </p>
-                  </div>
-                  <div className="rounded-xl bg-surfaceContainer p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-secondary">
-                      Processed
-                    </p>
-                    <p className="mt-2 text-lg font-semibold text-onBackground">
-                      {formatDate(selectedDoc.created_at)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-6 space-y-4">
-                  <div>
-                    <p className="text-sm font-semibold text-onBackground">
-                      Original Content
-                    </p>
-                    <p className="mt-2 text-sm leading-relaxed text-secondary">
-                      {selectedDoc.original_content}
-                    </p>
-                  </div>
-                  <div>
-                    <div className="flex justify-between">
-                      <p className="text-sm font-semibold text-onBackground">
-                        Summary
-                      </p>
-                      <CopyButton selectedSummary={selectedDoc.summary} />
-                    </div>
-                    <p className="mt-2 text-sm leading-relaxed text-secondary">
-                      {selectedDoc.summary}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <SummaryPanel
+                document={selectedDoc}
+                onClose={() => setSelectedDocId(null)}
+                summaryRef={summaryRef}
+              />
             )}
           </div>
         </section>
