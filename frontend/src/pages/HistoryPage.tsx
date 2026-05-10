@@ -5,24 +5,19 @@ import Button from "../components/common/Button";
 import {
   useGetDocumentsQuery,
   useGetDocumentQuery,
+  useDeleteDocumentMutation,
 } from "../services/uploadApi";
-import {
-  Menu,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  EllipsisVertical,
-  Copy,
-} from "lucide-react";
+import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
 import CopyButton from "../components/common/CopyButton";
+import DocumentMenu from "../components/features/DocumentMenu";
 
 const HistoryPage = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedDocId, setSelectedDocId] = useState<number | null>(null);
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null); // EllipsisVertical
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [deleteDocument] = useDeleteDocumentMutation();
 
   const summaryRef = useRef<HTMLDivElement | null>(null);
 
@@ -71,6 +66,18 @@ const HistoryPage = () => {
           year: "numeric",
         })
       : "-";
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteDocument(id).unwrap();
+
+      if (selectedDocId === id) {
+        setSelectedDocId(null);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     if (selectedDoc) {
@@ -223,33 +230,7 @@ const HistoryPage = () => {
                         View Summary
                       </Button>
 
-                      <div className="relative flex items-center justify-center md:col-span-1">
-                        <button
-                          onClick={() =>
-                            setOpenMenuId(openMenuId === doc.id ? null : doc.id)
-                          }
-                          className="rounded-full p-1 hover:bg-gray-200"
-                        >
-                          <EllipsisVertical
-                            size={18}
-                            className="cursor-pointer text-secondary"
-                          />
-                        </button>
-
-                        {openMenuId === doc.id && (
-                          <div className="absolute right-0 top-8 z-20 w-36 rounded-xl border border-gray-200 bg-white shadow-lg">
-                            <button
-                              onClick={() => {
-                                handleDelete(doc.id);
-                                setOpenMenuId(null);
-                              }}
-                              className="w-full px-4 py-3 text-left text-sm text-red-500 hover:bg-red-50"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                      <DocumentMenu docId={doc.id} onDelete={handleDelete} />
                     </div>
                   </div>
                 ))}

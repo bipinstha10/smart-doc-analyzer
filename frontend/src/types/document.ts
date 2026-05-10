@@ -7,3 +7,7 @@ export interface DocumentResponse {
   original_content: string;
   all_scores: Record<string, number>;
 }
+
+export interface DeleteResponse {
+  message: string;
+}

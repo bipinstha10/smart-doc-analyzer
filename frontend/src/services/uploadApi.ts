@@ -1,5 +1,5 @@
 // uploadApi.ts
-import type { DocumentResponse } from "../types/document";
+import type { DocumentResponse, DeleteResponse } from "../types/document";
 import baseApi from "./baseApi";
 
 // interface UploadResponse {
@@ -46,6 +46,13 @@ export const uploadApi = baseApi.injectEndpoints({
       query: (id) => `/documents/${id}`,
       providesTags: (result, error, id) => [{ type: "Document", id }],
     }),
+    deleteDocument: build.mutation<DeleteResponse, number>({
+      query: (id) => ({
+        url: `/documents/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Document"],
+    }),
   }),
 });
 
@@ -54,4 +61,5 @@ export const {
   usePostTextMutation,
   useGetDocumentsQuery,
   useGetDocumentQuery,
+  useDeleteDocumentMutation,
 } = uploadApi;
