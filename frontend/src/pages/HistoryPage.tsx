@@ -6,12 +6,21 @@ import {
   useGetDocumentsQuery,
   useGetDocumentQuery,
 } from "../services/uploadApi";
-import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  EllipsisVertical,
+  Copy,
+} from "lucide-react";
+import CopyButton from "../components/common/CopyButton";
 
 const HistoryPage = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedDocId, setSelectedDocId] = useState<number | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null); // EllipsisVertical
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -197,21 +206,50 @@ const HistoryPage = () => {
                       </p>
                     </div>
 
-                    <div className="flex gap-2 mt-4 md:col-span-4 md:mt-0 md:grid md:grid-cols-6 md:gap-4">
-                      <div className="md:col-span-3 flex md:justify-center items-center">
+                    <div className="flex gap-2 mt-4 md:col-span-4 md:mt-0 md:grid md:grid-cols-7 md:gap-4">
+                      <div className="md:col-span-2 flex md:justify-center items-center">
                         <span className="rounded-2xl p-2 w-25 text-center bg-[#E2E2E2] font-accent text-[10px] uppercase">
                           {doc.category}
                         </span>
                       </div>
+
                       <Button
                         onClick={() => {
                           setSelectedDocId(doc.id);
                         }}
                         variant="primary"
-                        className="grow md:col-span-3 rounded-2xl p-4 font-accent text-[10px] uppercase tracking-[0.2em] text-onBackground"
+                        className="grow md:col-span-4 rounded-2xl p-4 font-accent text-[10px] uppercase tracking-[0.2em] text-onBackground"
                       >
                         View Summary
                       </Button>
+
+                      <div className="relative flex items-center justify-center md:col-span-1">
+                        <button
+                          onClick={() =>
+                            setOpenMenuId(openMenuId === doc.id ? null : doc.id)
+                          }
+                          className="rounded-full p-1 hover:bg-gray-200"
+                        >
+                          <EllipsisVertical
+                            size={18}
+                            className="cursor-pointer text-secondary"
+                          />
+                        </button>
+
+                        {openMenuId === doc.id && (
+                          <div className="absolute right-0 top-8 z-20 w-36 rounded-xl border border-gray-200 bg-white shadow-lg">
+                            <button
+                              onClick={() => {
+                                handleDelete(doc.id);
+                                setOpenMenuId(null);
+                              }}
+                              className="w-full px-4 py-3 text-left text-sm text-red-500 hover:bg-red-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -330,9 +368,12 @@ const HistoryPage = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-onBackground">
-                      Summary
-                    </p>
+                    <div className="flex justify-between">
+                      <p className="text-sm font-semibold text-onBackground">
+                        Summary
+                      </p>
+                      <CopyButton selectedSummary={selectedDoc.summary} />
+                    </div>
                     <p className="mt-2 text-sm leading-relaxed text-secondary">
                       {selectedDoc.summary}
                     </p>
