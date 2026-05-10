@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Eye, EyeClosed } from "lucide-react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import type { UserInput, UserLoginInput } from "../../types/userInput";
+import type { UserInput, UserLoginInput } from "../../../types/userInput";
 import { toast } from "react-toastify";
 
-import { useAppDispatch } from "../../hooks/useAppDispatch";
-import { useLoginMutation } from "../../services/user";
-import { setCredentials } from "../../store/authSlice";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useLoginMutation } from "../../../services/user";
+import { setCredentials } from "../../../store/authSlice";
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,9 +31,10 @@ export const LoginPage = () => {
       toast.success("Logged in successfully.");
       navigate("/");
       reset();
-    } catch (err: any) {
-      if ("status" in err && err.status === 401) {
-        toast.error(err.data?.detail ?? "Invalid credentials.");
+    } catch (err: unknown) {
+      const error = err as { status?: number; data?: { detail?: string } };
+      if ("status" in error && error.status === 401) {
+        toast.error(error.data?.detail ?? "Invalid credentials.");
       } else {
         toast.error("Something went wrong. Please try again.");
       }

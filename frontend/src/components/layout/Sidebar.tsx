@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { clearAuth } from "../../store/authSlice";
-import { clearScoreData } from "../../store/scoreSlice";
+import { clearScoreData, clearDraftState } from "../../store/scoreSlice";
 
 import Button from "../common/Button";
 
@@ -60,6 +60,7 @@ export const Sidebar = () => {
       <button
         onClick={() => {
           dispatch(clearScoreData());
+          dispatch(clearDraftState());
           if (location.pathname !== "/dashboard") {
             navigate("/dashboard");
           }

@@ -1,4 +1,4 @@
-import SignupForm from "../components/features/SignupForm";
+import SignupForm from "../components/features/auth/SignupForm";
 import Divider from "../components/common/Divider";
 import { Link, Navigate } from "react-router";
 import { AuthNavbar } from "../components/layout/Navbar";

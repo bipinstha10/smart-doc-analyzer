@@ -13,7 +13,13 @@ import {
   usePostTextMutation,
 } from "../../../services/uploadApi";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
-import { clearScoreData, setScoreData } from "../../../store/scoreSlice";
+import {
+  clearScoreData,
+  setScoreData,
+  setDraftMode,
+  setDraftText,
+  clearDraftState,
+} from "../../../store/scoreSlice";
 import type { RootState } from "../../../store/store";
 
 export interface FileUploadRef {
@@ -23,12 +29,14 @@ export interface FileUploadRef {
 const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
   const dispatch = useAppDispatch();
   const scoreData = useSelector((state: RootState) => state.score.data);
+  const draftMode = useSelector((state: RootState) => state.score.draftMode);
+  const draftText = useSelector((state: RootState) => state.score.draftText);
 
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [mode, setMode] = useState<"file" | "text">("file");
-  const [textInput, setTextInput] = useState("");
+  const mode = draftMode;
+  const textInput = draftText;
 
   const [postDocument, { isLoading, isError, isSuccess, error, reset }] =
     usePostDocumentMutation();
@@ -45,6 +53,10 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
   ] = usePostTextMutation();
 
   const result = scoreData;
+  const displayFileName = uploadedFile?.name ?? result?.file_name;
+  const displayFileSize = uploadedFile
+    ? `${(uploadedFile.size / 1024).toFixed(2)} KB`
+    : undefined;
 
   const handleDrag = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -104,8 +116,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
   const resetClassification = () => {
     setUploadedFile(null);
     setPreview(null);
-    setTextInput("");
-    setMode("file");
+    dispatch(clearDraftState());
     dispatch(clearScoreData());
     reset();
     resetText();
@@ -119,7 +130,12 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
     if (!uploadedFile) return;
     try {
       const data = await postDocument(uploadedFile).unwrap();
-      dispatch(setScoreData(data)); // ✅ save full result to Redux
+      dispatch(
+        setScoreData({
+          ...data,
+          file_name: data.file_name ?? uploadedFile.name,
+        }),
+      );
     } catch (err) {
       console.error("Upload failed:", err);
     }
@@ -129,14 +145,14 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
     if (!textInput.trim()) return;
     try {
       const data = await postText(textInput).unwrap();
-      dispatch(setScoreData(data)); // ✅ save full result to Redux
+      dispatch(setScoreData({ ...data, file_name: data.file_name ?? undefined }));
     } catch (err) {
       console.error("Text submit failed:", err);
     }
   };
 
   const switchMode = (newMode: "file" | "text") => {
-    setMode(newMode);
+    dispatch(setDraftMode(newMode));
     dispatch(clearScoreData());
     reset();
     resetText();
@@ -181,7 +197,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
             </button>
           </div>
 
-          {mode === "file" && !uploadedFile ? (
+          {mode === "file" && !uploadedFile && !result ? (
             <>
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 rounded-full flex items-center justify-center mb-4 sm:mb-6">
                 <Upload className="w-8 h-8 sm:w-10 sm:h-10 text-black" />
@@ -244,9 +260,9 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
                       <p className="text-gray-700 font-medium text-sm sm:text-base">
                         PDF Document
                       </p>
-                      {uploadedFile && (
+                      {displayFileName && (
                         <p className="text-xs sm:text-sm text-gray-500 mt-1 text-center px-4 break-all">
-                          {uploadedFile.name}
+                          {displayFileName}
                         </p>
                       )}
                     </div>
@@ -258,9 +274,9 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
                       <p className="text-gray-700 font-medium text-sm sm:text-base">
                         Document File
                       </p>
-                      {uploadedFile && (
+                      {displayFileName && (
                         <p className="text-xs sm:text-sm text-gray-500 mt-1 text-center px-4 break-all">
-                          {uploadedFile.name}
+                          {displayFileName}
                         </p>
                       )}
                     </div>
@@ -272,14 +288,16 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
                   <div className="flex items-center space-x-3 min-w-0">
                     <File className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 shrink-0" />
                     <div className="min-w-0">
-                      {uploadedFile && (
+                      {displayFileName && (
                         <>
                           <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
-                            {uploadedFile.name}
+                            {displayFileName}
                           </p>
-                          <p className="text-xs text-gray-600">
-                            {(uploadedFile.size / 1024).toFixed(2)} KB
-                          </p>
+                          {displayFileSize && (
+                            <p className="text-xs text-gray-600">
+                              {displayFileSize}
+                            </p>
+                          )}
                         </>
                       )}
                     </div>
@@ -359,7 +377,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
                   </h3>
                   <Button
                     onClick={() => {
-                      setTextInput("");
+                      dispatch(setDraftText(""));
                       dispatch(clearScoreData());
                       resetText();
                     }}
@@ -372,7 +390,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
 
                 <textarea
                   value={textInput}
-                  onChange={(e) => setTextInput(e.target.value)}
+                  onChange={(e) => dispatch(setDraftText(e.target.value))}
                   placeholder="Type or paste your text here..."
                   className="w-full h-64 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1E59A7] focus:border-transparent resize-none"
                 />

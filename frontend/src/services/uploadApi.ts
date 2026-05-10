@@ -44,7 +44,7 @@ export const uploadApi = baseApi.injectEndpoints({
     }),
     getDocument: build.query<DocumentResponse, number>({
       query: (id) => `/documents/${id}`,
-      providesTags: (result, error, id) => [{ type: "Document", id }],
+      providesTags: (_result, _error, id) => [{ type: "Document", id }],
     }),
     deleteDocument: build.mutation<DeleteResponse, number>({
       query: (id) => ({

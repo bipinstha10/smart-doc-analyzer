@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import type { UserInput } from "../../types/userInput";
+import type { UserInput } from "../../../types/userInput";
 import { toast } from "react-toastify";
 
-import { useAppDispatch } from "../../hooks/useAppDispatch";
-import { useSignupMutation } from "../../services/user";
-import { setCredentials } from "../../store/authSlice";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useSignupMutation } from "../../../services/user";
+import { setCredentials } from "../../../store/authSlice";
 
 const SignupForm = () => {
   const navigate = useNavigate();

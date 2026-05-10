@@ -1,4 +1,4 @@
-import LoginForm from "../components/features/LoginForm";
+import LoginForm from "../components/features/auth/LoginForm";
 import Divider from "../components/common/Divider";
 import { UserRoundPlus } from "lucide-react";
 import { Link, Navigate } from "react-router";
