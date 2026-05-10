@@ -28,6 +28,7 @@ export const uploadApi = baseApi.injectEndpoints({
           body: formData,
         };
       },
+      invalidatesTags: ["Document"],
     }),
     postText: build.mutation<DocumentResponse, string>({
       query: (text: string) => ({
@@ -35,6 +36,7 @@ export const uploadApi = baseApi.injectEndpoints({
         method: "POST",
         body: { text },
       }),
+      invalidatesTags: ["Document"],
     }),
     getDocuments: build.query<DocumentResponse[], void>({
       query: () => "/documents",
@@ -42,6 +44,7 @@ export const uploadApi = baseApi.injectEndpoints({
     }),
     getDocument: build.query<DocumentResponse, number>({
       query: (id) => `/documents/${id}`,
+      providesTags: (result, error, id) => [{ type: "Document", id }],
     }),
   }),
 });
