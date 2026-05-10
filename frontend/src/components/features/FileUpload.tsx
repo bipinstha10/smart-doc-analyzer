@@ -1,4 +1,11 @@
-import { useState, forwardRef, useImperativeHandle, type DragEvent, type ChangeEvent } from "react";
+import {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  type DragEvent,
+  type ChangeEvent,
+} from "react";
+import { useSelector } from "react-redux";
 import { Upload, File, X, CheckCircle, FileText, Type } from "lucide-react";
 import Button from "../common/Button";
 import {
@@ -6,7 +13,8 @@ import {
   usePostTextMutation,
 } from "../../services/uploadApi";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
-import { setScoreData } from "../../store/scoreSlice";
+import { clearScoreData, setScoreData } from "../../store/scoreSlice";
+import type { RootState } from "../../store/store";
 
 export interface FileUploadRef {
   resetClassification: () => void;
@@ -14,6 +22,7 @@ export interface FileUploadRef {
 
 const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
   const dispatch = useAppDispatch();
+  const scoreData = useSelector((state: RootState) => state.score.data);
 
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -35,12 +44,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
     },
   ] = usePostTextMutation();
 
-  const [result, setResult] = useState<{
-    category: string;
-    summary: string;
-    all_scores: Record<string, number>;
-    confidence_score: number;
-  } | null>(null);
+  const result = scoreData;
 
   const handleDrag = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -70,8 +74,9 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
 
   const handleFile = (file: File) => {
     setUploadedFile(file);
-    setResult(null);
+    dispatch(clearScoreData());
     reset();
+    resetText();
 
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
@@ -92,7 +97,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
   const removeFile = () => {
     setUploadedFile(null);
     setPreview(null);
-    setResult(null);
+    dispatch(clearScoreData());
     reset();
   };
 
@@ -101,7 +106,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
     setPreview(null);
     setTextInput("");
     setMode("file");
-    setResult(null);
+    dispatch(clearScoreData());
     reset();
     resetText();
   };
@@ -114,12 +119,6 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
     if (!uploadedFile) return;
     try {
       const data = await postDocument(uploadedFile).unwrap();
-      setResult({
-        category: data.category,
-        summary: data.summary,
-        all_scores: data.all_scores,
-        confidence_score: data.confidence_score,
-      });
       dispatch(setScoreData(data)); // ✅ save full result to Redux
     } catch (err) {
       console.error("Upload failed:", err);
@@ -130,12 +129,6 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
     if (!textInput.trim()) return;
     try {
       const data = await postText(textInput).unwrap();
-      setResult({
-        category: data.category,
-        summary: data.summary,
-        all_scores: data.all_scores,
-        confidence_score: data.confidence_score,
-      });
       dispatch(setScoreData(data)); // ✅ save full result to Redux
     } catch (err) {
       console.error("Text submit failed:", err);
@@ -144,7 +137,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
 
   const switchMode = (newMode: "file" | "text") => {
     setMode(newMode);
-    setResult(null);
+    dispatch(clearScoreData());
     reset();
     resetText();
   };
@@ -315,10 +308,10 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
                 )}
 
                 {/* Result Section — Category and Summary */}
-                {isSuccess && result && (
+                {result && (
                   <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6">
                     <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
-                      Document Analysis
+                      Analysis
                     </h4>
 
                     {/* Category */}
@@ -367,7 +360,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
                   <Button
                     onClick={() => {
                       setTextInput("");
-                      setResult(null);
+                      dispatch(clearScoreData());
                       resetText();
                     }}
                     variant="outline"
@@ -406,10 +399,10 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
                 )}
 
                 {/* Result Section — Category and Summary */}
-                {isTextSuccess && result && (
+                {result && (
                   <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-4 mt-4">
                     <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
-                      Text Analysis
+                      Analysis
                     </h4>
 
                     {/* Category */}
