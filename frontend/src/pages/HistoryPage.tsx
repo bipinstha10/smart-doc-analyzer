@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { skipToken } from "@reduxjs/toolkit/query";
 import Sidebar from "../components/layout/Sidebar";
 import Button from "../components/common/Button";
@@ -14,6 +14,8 @@ const HistoryPage = () => {
   const [selectedDocId, setSelectedDocId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const summaryRef = useRef<HTMLDivElement | null>(null);
 
   const { data: documents, isLoading, isError } = useGetDocumentsQuery();
   const { data: selectedDoc } = useGetDocumentQuery(selectedDocId ?? skipToken);
@@ -60,6 +62,15 @@ const HistoryPage = () => {
           year: "numeric",
         })
       : "-";
+
+  useEffect(() => {
+    if (selectedDoc) {
+      summaryRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [selectedDoc]);
 
   return (
     <div className="min-h-screen bg-[#F9F9F9]">
@@ -193,7 +204,9 @@ const HistoryPage = () => {
                         </span>
                       </div>
                       <Button
-                        onClick={() => setSelectedDocId(doc.id)}
+                        onClick={() => {
+                          setSelectedDocId(doc.id);
+                        }}
                         variant="primary"
                         className="grow md:col-span-3 rounded-2xl p-4 font-accent text-[10px] uppercase tracking-[0.2em] text-onBackground"
                       >
@@ -258,7 +271,10 @@ const HistoryPage = () => {
             </div>
 
             {selectedDocId !== null && selectedDoc && (
-              <div className="mt-10 rounded-xl bg-white p-6 shadow-md shadow-gray-300/40">
+              <div
+                ref={summaryRef}
+                className="mt-10 rounded-xl bg-white p-6 shadow-md shadow-gray-300/40"
+              >
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="text-sm text-secondary uppercase tracking-[0.2em]">
