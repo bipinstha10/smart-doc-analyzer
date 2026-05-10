@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from "react";
+import { useState, forwardRef, useImperativeHandle, type DragEvent, type ChangeEvent } from "react";
 import { Upload, File, X, CheckCircle, FileText, Type } from "lucide-react";
 import Button from "../common/Button";
 import {
@@ -8,7 +8,11 @@ import {
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { setScoreData } from "../../store/scoreSlice";
 
-const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
+export interface FileUploadRef {
+  resetClassification: () => void;
+}
+
+const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
   const dispatch = useAppDispatch();
 
   const [dragActive, setDragActive] = useState(false);
@@ -38,7 +42,7 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
     confidence_score: number;
   } | null>(null);
 
-  const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrag = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -48,7 +52,7 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
     }
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -58,7 +62,7 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       handleFile(e.target.files[0]);
     }
@@ -91,6 +95,20 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
     setResult(null);
     reset();
   };
+
+  const resetClassification = () => {
+    setUploadedFile(null);
+    setPreview(null);
+    setTextInput("");
+    setMode("file");
+    setResult(null);
+    reset();
+    resetText();
+  };
+
+  useImperativeHandle(ref, () => ({
+    resetClassification,
+  }));
 
   const handleUpload = async () => {
     if (!uploadedFile) return;
@@ -132,7 +150,7 @@ const FileUpload = forwardRef<HTMLDivElement | null>((_, ref) => {
   };
 
   return (
-    <div ref={ref} className="mx-auto py-12">
+    <div className="mx-auto py-12">
       <div
         className={`bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-12 border-2 border-dashed transition-all duration-200 ${
           dragActive ? "border-[#1E59A7] bg-indigo-50" : "border-gray-300"

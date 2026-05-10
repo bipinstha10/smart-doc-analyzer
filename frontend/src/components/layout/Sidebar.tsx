@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { clearAuth } from "../../store/authSlice";
+import { clearScoreData } from "../../store/scoreSlice";
 
 import Button from "../common/Button";
 
@@ -56,14 +57,19 @@ export const Sidebar = () => {
       </p> */}
 
       {/* New Classification button */}
-      <Link
-        to="/dashboard"
+      <button
+        onClick={() => {
+          dispatch(clearScoreData());
+          if (location.pathname !== "/dashboard") {
+            navigate("/dashboard");
+          }
+        }}
         className="mt-7 block w-full text-center text-sm uppercase"
       >
         <Button variant="primary" className="w-full">
           + New Classification
         </Button>
-      </Link>
+      </button>
 
       {/* Navigation */}
       <nav className="mt-8 space-y-2">

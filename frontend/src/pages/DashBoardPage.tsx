@@ -1,5 +1,7 @@
-import { useState, useRef } from "react";
-import FileUpload from "../components/features/FileUpload";
+import { useState, useRef, useEffect, type RefObject } from "react";
+import FileUpload, {
+  type FileUploadRef,
+} from "../components/features/FileUpload";
 import Sidebar from "../components/layout/Sidebar";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
@@ -9,9 +11,15 @@ import { Menu, X } from "lucide-react";
 const DashboardPage = () => {
   const [open, setOpen] = useState(false);
 
-  const fileUploadRef = useRef<HTMLDivElement>(null);
+  const fileUploadRef = useRef<FileUploadRef | null>(null);
 
   const scoreData = useSelector((state: RootState) => state.score.data);
+
+  useEffect(() => {
+    if (scoreData === null && fileUploadRef.current) {
+      fileUploadRef.current.resetClassification();
+    }
+  }, [scoreData]);
 
   // Update statistics when Redux data changes
   const allScores = scoreData?.all_scores ?? {
@@ -108,8 +116,7 @@ const Header = () => {
 
 // ================= CONTENT =================
 type ContentProps = {
-  fileUploadRef: React.RefObject<HTMLDivElement | null>;
-  // onFileAdded: (fileName: string) => void;
+  fileUploadRef: RefObject<FileUploadRef | null>;
 };
 
 const Content = ({ fileUploadRef }: ContentProps) => {
