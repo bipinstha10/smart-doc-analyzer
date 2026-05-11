@@ -16,9 +16,18 @@ const HistoryPage = () => {
   const [open, setOpen] = useState(false);
   const [query] = useState("");
   const [selectedDocId, setSelectedDocId] = useState<number | null>(null);
+  const [selectedDocNumber, setSelectedDocNumber] = useState<number | null>(
+    null,
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
   const [deleteDocument] = useDeleteDocumentMutation();
+
+  const handleViewSummary = (id: number, number: number) => {
+    setSelectedDocId(id);
+    setSelectedDocNumber(number);
+  };
 
   const summaryRef = useRef<HTMLDivElement | null>(null);
 
@@ -59,6 +68,7 @@ const HistoryPage = () => {
 
       if (selectedDocId === id) {
         setSelectedDocId(null);
+        setSelectedDocNumber(null);
       }
     } catch (error) {
       console.error(error);
@@ -151,14 +161,18 @@ const HistoryPage = () => {
               )}
 
               <div>
-                {paginatedResults.map((doc) => (
-                  <DocumentRow
-                    key={doc.id}
-                    doc={doc}
-                    onViewSummary={setSelectedDocId}
-                    onDelete={handleDelete}
-                  />
-                ))}
+                {paginatedResults.map((doc) => {
+                  const index = results.findIndex((d) => d.id === doc.id);
+                  return (
+                    <DocumentRow
+                      key={doc.id}
+                      doc={doc}
+                      number={index + 1}
+                      onViewSummary={handleViewSummary}
+                      onDelete={handleDelete}
+                    />
+                  );
+                })}
               </div>
 
               {/* Pagination Controls */}
@@ -174,13 +188,19 @@ const HistoryPage = () => {
               )}
             </div>
 
-            {selectedDocId !== null && selectedDoc && (
-              <SummaryPanel
-                document={selectedDoc}
-                onClose={() => setSelectedDocId(null)}
-                summaryRef={summaryRef}
-              />
-            )}
+            {selectedDocId !== null &&
+              selectedDoc &&
+              selectedDocNumber !== null && (
+                <SummaryPanel
+                  document={selectedDoc}
+                  number={selectedDocNumber}
+                  onClose={() => {
+                    setSelectedDocId(null);
+                    setSelectedDocNumber(null);
+                  }}
+                  summaryRef={summaryRef}
+                />
+              )}
           </div>
         </section>
       </div>

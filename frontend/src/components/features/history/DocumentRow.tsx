@@ -4,11 +4,12 @@ import DocumentMenu from "./DocumentMenu";
 
 type Props = {
   doc: DocumentResponse;
-  onViewSummary: (id: number) => void;
+  number: number;
+  onViewSummary: (id: number, number: number) => void;
   onDelete: (id: number) => void;
 };
 
-const DocumentRow = ({ doc, onViewSummary, onDelete }: Props) => {
+const DocumentRow = ({ doc, number, onViewSummary, onDelete }: Props) => {
   const formatDate = (iso?: string) =>
     iso
       ? new Date(iso).toLocaleDateString(undefined, {
@@ -25,7 +26,7 @@ const DocumentRow = ({ doc, onViewSummary, onDelete }: Props) => {
       </p>
 
       <div className="mt-2 text-base text-onBackground md:col-span-6">
-        <p className="font-semibold">Document #{doc.id}</p>
+        <p className="font-semibold">Document #{number}</p>
 
         <p className="line-clamp-2 text-xs text-secondary">
           {doc.original_content}
@@ -40,7 +41,7 @@ const DocumentRow = ({ doc, onViewSummary, onDelete }: Props) => {
         </div>
 
         <Button
-          onClick={() => onViewSummary(doc.id)}
+          onClick={() => onViewSummary(doc.id, number)}
           variant="primary"
           className="grow rounded-2xl p-4 font-accent text-[10px] uppercase tracking-[0.2em] text-onBackground md:col-span-4"
         >

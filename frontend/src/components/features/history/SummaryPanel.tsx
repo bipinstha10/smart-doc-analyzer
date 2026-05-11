@@ -6,10 +6,11 @@ import CopyButton from "../../common/CopyButton";
 
 type Props = {
   document: DocumentResponse;
+  number: number;
   onClose: () => void;
   summaryRef: RefObject<HTMLDivElement | null>;
 };
-const SummaryPanel = ({ document, onClose, summaryRef }: Props) => {
+const SummaryPanel = ({ document, number, onClose, summaryRef }: Props) => {
   const formatDate = (iso?: string) =>
     iso
       ? new Date(iso).toLocaleDateString(undefined, {
@@ -30,7 +31,7 @@ const SummaryPanel = ({ document, onClose, summaryRef }: Props) => {
             Selected summary
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-onBackground">
-            Document #{document.id}
+            Document #{number}
           </h2>
         </div>
         <Button
