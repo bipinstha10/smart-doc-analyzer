@@ -145,7 +145,9 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
     if (!textInput.trim()) return;
     try {
       const data = await postText(textInput).unwrap();
-      dispatch(setScoreData({ ...data, file_name: data.file_name ?? undefined }));
+      dispatch(
+        setScoreData({ ...data, file_name: data.file_name ?? undefined }),
+      );
     } catch (err) {
       console.error("Text submit failed:", err);
     }
@@ -153,7 +155,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
 
   const switchMode = (newMode: "file" | "text") => {
     dispatch(setDraftMode(newMode));
-    dispatch(clearScoreData());
+    // Preserve classification results across modes
     reset();
     resetText();
   };
@@ -168,6 +170,8 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
+        aria-label="File drop zone - drag and drop files here or click to select"
+        role="region"
       >
         <div className="flex flex-col items-center justify-center">
           {/* Mode Toggle */}
@@ -184,6 +188,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
             {/* Buttons */}
             <button
               onClick={() => switchMode("file")}
+              aria-pressed={mode === "file"}
               className="relative z-10 w-1/2 p-2 text-[12px] md:text-sm font-medium text-white"
             >
               File Upload
@@ -191,6 +196,7 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
 
             <button
               onClick={() => switchMode("text")}
+              aria-pressed={mode === "text"}
               className="relative z-10 w-1/2 p-2 text-[12px] md:text-sm font-medium text-white"
             >
               Text Input
@@ -407,12 +413,21 @@ const FileUpload = forwardRef<FileUploadRef, unknown>((_, ref) => {
 
                 {/* Error Message */}
                 {isTextError && (
-                  <div className="flex items-center space-x-2 bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-4 mt-4">
-                    <X className="w-5 h-5 text-red-600 shrink-0" />
-                    <p className="text-sm text-red-700 font-medium">
-                      {(textError as { data?: { message?: string } })?.data
-                        ?.message ?? "Processing failed. Please try again."}
-                    </p>
+                  <div className="flex items-center justify-between bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-4 mt-4">
+                    <div className="flex items-center space-x-2">
+                      <X className="w-5 h-5 text-red-600 shrink-0" />
+                      <p className="text-sm text-red-700 font-medium">
+                        {(textError as { data?: { message?: string } })?.data
+                          ?.message ?? "Processing failed. Please try again."}
+                      </p>
+                    </div>
+                    <Button
+                      onClick={handleTextSubmit}
+                      variant="outline"
+                      className="ml-2"
+                    >
+                      Retry
+                    </Button>
                   </div>
                 )}
 

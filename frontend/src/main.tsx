@@ -1,5 +1,5 @@
 // main.tsx
-import { StrictMode } from "react";
+import { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
@@ -16,10 +16,12 @@ import {
 import LandingPage from "./pages/LandingPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import SignUpPage from "./pages/SignUpPage.tsx";
-import DashBoardPage from "./pages/DashBoardPage.tsx";
-import HistoryPage from "./pages/HistoryPage.tsx";
-import OAuthSuccessPage from "./pages/OAuthSuccessPage.tsx";
 import ProtectedRoute from "./components/common/ProtectedRoute.tsx";
+
+// Lazy load heavy pages
+const DashBoardPage = lazy(() => import("./pages/DashBoardPage.tsx"));
+const HistoryPage = lazy(() => import("./pages/HistoryPage.tsx"));
+const OAuthSuccessPage = lazy(() => import("./pages/OAuthSuccessPage.tsx"));
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,7 +33,9 @@ const router = createBrowserRouter(
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <DashBoardPage />
+            <Suspense fallback={<div>Loading...</div>}>
+              <DashBoardPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -39,11 +43,20 @@ const router = createBrowserRouter(
         path="/history"
         element={
           <ProtectedRoute>
-            <HistoryPage />
+            <Suspense fallback={<div>Loading...</div>}>
+              <HistoryPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
-      <Route path="/oauth-success" element={<OAuthSuccessPage />} />
+      <Route 
+        path="/oauth-success" 
+        element={
+          <Suspense fallback={<div>Loading...</div>}>
+            <OAuthSuccessPage />
+          </Suspense>
+        } 
+      />
     </Route>,
   ),
 );

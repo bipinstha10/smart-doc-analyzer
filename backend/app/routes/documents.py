@@ -56,11 +56,43 @@ DISTILBART_DIR = os.path.join(MODEL_DIR, "distilbart-summarizer-finetuned")
 DISTILBART_BASE = "sshleifer/distilbart-cnn-12-6"
 
 ALLOWED_EXTENSIONS = {".pdf", ".docx", ".txt"}
+ALLOWED_MIME_TYPES = {
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/plain",
+}
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BERT_MAX_LEN = 128
 MAX_INPUT_LEN = 512
 MAX_TARGET_LEN = 128
 LABEL_NAMES = ["notice", "feedback", "complaint"]
+
+# ===== FILE VALIDATION =====
+
+
+def validate_file(file: UploadFile) -> None:
+    # Check file extension
+    filename = file.filename or ""
+    if not any(filename.lower().endswith(ext) for ext in ALLOWED_EXTENSIONS):
+        raise HTTPException(
+            status_code=400, detail="Unsupported file type. Allowed: PDF, DOCX, TXT"
+        )
+
+    # Check MIME type
+    if file.content_type not in ALLOWED_MIME_TYPES:
+        raise HTTPException(status_code=400, detail="Invalid file content type")
+
+    # Basic content validation (read first few bytes)
+    content = file.file.read(10)
+    file.file.seek(0)  # Reset file pointer
+    if filename.lower().endswith(".pdf") and not content.startswith(b"%PDF"):
+        raise HTTPException(status_code=400, detail="Invalid PDF file")
+    elif filename.lower().endswith(".docx") and not content.startswith(b"PK"):
+        raise HTTPException(status_code=400, detail="Invalid DOCX file")
+    # For TXT, no specific header
+
+
+# ===== MODEL LOADING (runs once at import time) =====
 
 DISTILBART_GEN = {
     "notice": {
@@ -429,12 +461,8 @@ async def upload_document(
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file provided")
 
-    extension = os.path.splitext(file.filename)[1].lower()
-    if extension not in ALLOWED_EXTENSIONS:
-        raise HTTPException(
-            status_code=400,
-            detail=f"File type not allowed. Allowed: {', '.join(ALLOWED_EXTENSIONS)}",
-        )
+    # Validate file type and content
+    validate_file(file)
 
     file_bytes = await file.read()
 
