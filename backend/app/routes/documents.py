@@ -464,6 +464,10 @@ async def upload_document(
     # Validate file type and content
     validate_file(file)
 
+    # Get file extension
+    filename = file.filename or ""
+    extension = os.path.splitext(filename)[1].lower()
+
     file_bytes = await file.read()
 
     # Extract text
